@@ -8,7 +8,7 @@ Los alumnos solo necesitan un navegador y la URL. No instalan nada.
 
 ## Para el profesor
 
-- **URL de clase:** *(pendiente del primer despliegue)*
+- **URL de clase:** https://retailnova-lab.streamlit.app/
 - **Primera clase:** 8 de septiembre de 2026
 - Abre la aplicación 10 minutos antes de clase: si lleva días sin usarse, tarda
   un poco en despertar.

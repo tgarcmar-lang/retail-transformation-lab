@@ -69,18 +69,29 @@ La inflación de alcance es el principal riesgo de este proyecto.
 
 ## Estado actual
 
-**Semana 1 (29 jul 2026).** Esqueleto creado. Pendiente: cuentas de GitHub,
-Streamlit Cloud y Google AI Studio; primer despliegue.
+**Semana 1 (29 jul 2026).** Plataforma desplegada y funcionando.
+
+**URL de producción:** https://retailnova-lab.streamlit.app/
+**Repositorio:** https://github.com/tgarcmar-lang/retail-transformation-lab
 
 ### Hecho
 - [x] Estructura de carpetas
 - [x] Landing page con selector de filial
 - [x] `requirements.txt`, `.gitignore`, configuración de Streamlit
+- [x] Repositorio en GitHub y despliegue automático en Streamlit Cloud
 
 ### Siguiente
-- [ ] Subir a GitHub y desplegar (URL viva)
 - [ ] Generador de las 5 filiales de RetailNova — **la tarea crítica**
 - [ ] Sesión 1: Diagnóstico
+
+## Notas de despliegue (aprendidas a golpes)
+
+- Streamlit Cloud ejecuta **Python 3.14**. No fijar versiones exactas de
+  librerías: si no existe rueda precompilada para esa versión, intenta compilar
+  desde el código fuente y falla (`pillow` no encuentra `zlib`). Usar `>=`.
+- El despliegue se actualiza solo con cada push a `main`. No hay que tocar nada
+  en la web de Streamlit.
+- El registro del despliegue está en `Manage app`, abajo a la derecha.
 
 ## Registro de decisiones
 
