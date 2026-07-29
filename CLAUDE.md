@@ -100,10 +100,43 @@ sesión se reenvía el HTML en cada clic, así que allí va el pequeño.
 - [x] Guion del profesor para la Sesión 1 — **vive fuera del repositorio**,
       en `C:\Proyectos\retail-lab-profesor`
 
-- [x] Tutor de guardia (Gemini) en la Sesión 1, sin dependencias nuevas
+- [x] Tutor de guardia (Gemini) en las dos sesiones, sin dependencias nuevas
+- [x] Sesión 2 · Descarbonización: simulador de palancas con presupuesto y
+      plan descargable
 
 ### Siguiente
-- [ ] Sesión 2: Descarbonización (objetivo: octubre)
+- [ ] Afinar las dos sesiones con lo que se aprenda en la clase del 8 de
+      septiembre. **Nada estructural hasta entonces.**
+
+## Sesión 2 · cómo está montada
+
+Tres pasos, estructura mixta: arranque guiado corto y después simulador
+libre. Es la segunda vez que tocan la herramienta.
+
+1. **De dónde partís** — su huella y su conclusión de la Sesión 1, que
+   vuelven a introducir a mano leyéndola de su informe impreso
+2. **Vuestras palancas** — coste por tonelada de cada medida *en su filial*
+3. **Vuestro plan** — simulador con presupuesto y plan descargable
+
+**Objetivo: −25 %. Presupuesto: 2,5 % de las ventas anuales**, presentado
+como plan de inversión a tres años. El modelo vive en `core/palancas.py`.
+
+**El equilibrio está calibrado y protegido por pruebas.** Con el mejor plan
+posible cada filial llega al 29-34 %: el objetivo es alcanzable eligiendo
+bien e imposible eligiendo mal. Si alguien toca un coste o el presupuesto y
+rompe eso, `tests/test_palancas.py` lo detecta.
+
+| Filial | Palanca más rentable | Detalle |
+|---|---|---|
+| A · Madrid | Energía | Ninguna palanca suelta le llega: tiene que combinar |
+| B · Barcelona | Energía | Igual que Madrid |
+| C · Valencia | Refrigerante (1.116 €/t) | Cambiar el R-404A casi le basta |
+| D · Sevilla | Refrigerante (1.173 €/t) | Y le queda margen en rutas |
+| E · Bilbao | Energía | El refrigerante no le sirve: ya migró a CO₂ |
+
+**La trampa del caso:** si Bilbao copia el plan de Valencia, se gasta 1,4 M€
+en cambiar un refrigerante que ya cambió y reduce cero. Hay una prueba que lo
+verifica y la interfaz se lo avisa, pero solo después de que lo intenten.
 
 ## El tutor de guardia
 
@@ -246,6 +279,15 @@ inverosímil.
   Gemini en lugar de con el SDK de Google. Motivo: `requests` ya viene con
   Streamlit, así que no se toca `requirements.txt` y desaparece el riesgo de
   que una dependencia nueva tumbe el despliegue.
+- **2026-07-29** — Sesión 2 con objetivo fijo del 25 % y presupuesto cerrado.
+  Sin restricción económica el ejercicio sería trivial: activar todo hasta
+  llegar. El objetivo fijo además hace comparables los cinco planes.
+- **2026-07-29** — Presupuesto subido del 1,2 % al 2,5 % de las ventas tras
+  calibrar: con el 1,2 % ninguna filial pasaba del 21 % y el objetivo era
+  inalcanzable. Se presenta como plan de inversión a tres años para que la
+  cifra sea creíble.
+- **2026-07-29** — Sesión 2 mixta y no guiada por pasos como la 1: ya conocen
+  la herramienta, y repetir la misma mecánica se les haría infantil.
 - **2026-07-29** — El tutor solo pregunta, nunca responde. Si el modelo
   devuelve una afirmación, una parrafada o varias preguntas, se descarta y
   sale una del banco escrito a mano. Regalar el hallazgo destruiría la sesión.

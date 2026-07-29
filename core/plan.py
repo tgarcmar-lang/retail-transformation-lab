@@ -1,0 +1,160 @@
+"""Plan de descarbonización que se lleva cada grupo de la Sesión 2.
+
+Mismo criterio que el informe de la Sesión 1: HTML autocontenido, imprimible
+a PDF con Ctrl+P y sin dependencias nuevas. Reutiliza los estilos de
+`core/informe.py` para que los dos documentos se parezcan.
+"""
+
+from __future__ import annotations
+
+import html
+from datetime import datetime
+
+from core import filiales, informe, palancas
+
+#: Preguntas de la sesión. La clave es la que usa el módulo para guardar la
+#: respuesta; el texto es lo que sale impreso.
+PREGUNTAS = {
+    "diagnostico_previo": "¿Cuál dijisteis que era el problema principal de "
+                          "vuestra filial en la Sesión 1?",
+    "sigue_valiendo": "Viendo la huella entera, ¿ese diagnóstico sigue "
+                      "valiendo o se os quedó corto?",
+    "orden": "¿En qué orden vais a usar las palancas y por qué?",
+    "justificacion": "¿Por qué este plan y no otro? ¿Qué habéis dejado fuera?",
+    "riesgo": "¿Qué es lo que más fácilmente puede salir mal?",
+    "siguiente_euro": "Si os dieran un millón más, ¿en qué lo gastaríais?",
+}
+
+
+def _num(valor: float, decimales: int = 1) -> str:
+    texto = f"{valor:,.{decimales}f}"
+    return texto.replace(",", "·").replace(".", ",").replace("·", ".")
+
+
+def _eur(valor: float) -> str:
+    if abs(valor) >= 1_000_000:
+        return _num(valor / 1_000_000, 2) + " M€"
+    return _num(valor / 1_000, 0) + " k€"
+
+
+def _pct(valor: float, decimales: int = 1) -> str:
+    return _num(valor * 100, decimales) + " %"
+
+
+def _tarjeta(etiqueta: str, cifra: str) -> str:
+    return (f'<div class="tarjeta"><div class="etiqueta">{html.escape(etiqueta)}</div>'
+            f'<div class="cifra">{html.escape(cifra)}</div></div>')
+
+
+def _respuesta(texto: str) -> str:
+    limpio = (texto or "").strip()
+    if not limpio:
+        return '<div class="respuesta vacia">Sin responder.</div>'
+    return f'<div class="respuesta">{html.escape(limpio)}</div>'
+
+
+def _tabla_plan(resultado: dict) -> str:
+    filas = []
+    for fila in resultado["detalle"]:
+        if fila["intensidad"] <= 0:
+            intensidad = "No se aplica"
+        elif fila["codigo"] == "rutas":
+            intensidad = _num(fila["intensidad"], 1) + " puntos"
+        else:
+            intensidad = _pct(fila["intensidad"], 0)
+        coste_t = ("—" if fila["coste_por_t"] == float("inf")
+                   else _num(fila["coste_por_t"], 0) + " €")
+        filas.append(
+            f"<tr><td>{html.escape(fila['nombre'])}</td>"
+            f'<td class="num">{intensidad}</td>'
+            f'<td class="num">{_num(fila["evitado_t"], 0)} t</td>'
+            f'<td class="num">{_eur(fila["coste_eur"])}</td>'
+            f'<td class="num">{coste_t}</td></tr>'
+        )
+    filas.append(
+        f'<tr class="propia"><td>Total</td><td class="num"></td>'
+        f'<td class="num">{_num(resultado["evitado_t"], 0)} t</td>'
+        f'<td class="num">{_eur(resultado["coste_eur"])}</td>'
+        f'<td class="num"></td></tr>'
+    )
+    return (
+        "<table><thead><tr><th>Palanca</th>"
+        '<th class="num">Intensidad</th><th class="num">Evita</th>'
+        '<th class="num">Inversión</th><th class="num">€ por tonelada</th>'
+        "</tr></thead><tbody>" + "".join(filas) + "</tbody></table>"
+    )
+
+
+def generar(grupo: str, resultado: dict, respuestas: dict[str, str],
+            integrantes: str = "") -> str:
+    """Construye el plan completo en HTML."""
+    filial = filiales.obtener(grupo)
+    fecha = datetime.now().strftime("%d/%m/%Y")
+
+    cumple = resultado["objetivo_cumplido"] and resultado["dentro_de_presupuesto"]
+    veredicto = (
+        "El plan alcanza el objetivo dentro del presupuesto."
+        if cumple else
+        "El plan todavía no cumple: "
+        + ("se sale del presupuesto." if not resultado["dentro_de_presupuesto"]
+           else f'faltan {_num(resultado["objetivo_t"] - resultado["evitado_t"], 0)} '
+                f"toneladas por reducir.")
+    )
+
+    tarjetas = "".join([
+        _tarjeta("Huella de partida", f'{_num(resultado["base_t"], 0)} t'),
+        _tarjeta("Huella tras el plan", f'{_num(resultado["final_t"], 0)} t'),
+        _tarjeta("Reducción", _pct(resultado["reduccion"])),
+        _tarjeta("Objetivo", _pct(palancas.OBJETIVO, 0)),
+        _tarjeta("Inversión", _eur(resultado["coste_eur"])),
+        _tarjeta("Presupuesto", _eur(resultado["presupuesto_eur"])),
+    ])
+
+    secciones = "".join(
+        f"<h3>{html.escape(PREGUNTAS[clave])}</h3>"
+        f"{_respuesta(respuestas.get(clave, ''))}"
+        for clave in PREGUNTAS
+    )
+
+    return f"""<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<title>Plan de descarbonización · {html.escape(filial.nombre)}</title>
+<style>{informe.ESTILOS}</style></head><body>
+
+<div class="cabecera">
+  <h1>Plan de descarbonización</h1>
+  <p><strong>{html.escape(filial.nombre)}</strong> · Grupo {grupo} ·
+     Sesión 2</p>
+  <p>{html.escape(integrantes) if integrantes.strip()
+      else "Sin integrantes indicados"}</p>
+  <p>Retail Transformation Lab · Escuela Politécnica · UCJC · {fecha}</p>
+</div>
+
+<h2>1 · Resultado</h2>
+<div class="tarjetas">{tarjetas}</div>
+<p><strong>{html.escape(veredicto)}</strong></p>
+
+<h2>2 · Las medidas</h2>
+{_tabla_plan(resultado)}
+<p>La columna de euros por tonelada es la que ordena la decisión: mide qué
+rinde cada euro invertido. Una palanca cara en términos absolutos puede ser
+la más eficiente, y una barata puede no servir de nada en esta filial.</p>
+
+<h2>3 · El razonamiento del grupo</h2>
+{secciones}
+
+<div class="pie">
+  <p>Datos sintéticos generados para uso docente. RetailNova Europa es una
+  empresa ficticia. El presupuesto corresponde a un plan de inversión a tres
+  años y equivale al {_pct(palancas.PRESUPUESTO_SOBRE_VENTAS, 1)} de las
+  ventas anuales de la filial.</p>
+  <p>Para guardar como PDF: Archivo → Imprimir → Destino: Guardar como PDF.</p>
+</div>
+
+</body></html>"""
+
+
+def nombre_de_fichero(grupo: str) -> str:
+    filial = filiales.obtener(grupo)
+    fecha = datetime.now().strftime("%Y%m%d")
+    return f"plan_descarbonizacion_{filial.ciudad.lower()}_grupo{grupo}_{fecha}.html"

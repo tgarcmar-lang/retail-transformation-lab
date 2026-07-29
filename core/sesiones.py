@@ -27,7 +27,7 @@ SESIONES: list[Sesion] = [
         numero=2,
         titulo="Descarbonización",
         objetivo="Medir la huella de carbono y reducirla un 25 %.",
-        disponible=False,
+        disponible=True,
     ),
     Sesion(
         numero=3,

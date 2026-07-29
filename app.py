@@ -6,7 +6,7 @@ Escuela Politécnica · Universidad Camilo José Cela
 import streamlit as st
 
 from core import datos, filiales, kpis, marca, sesiones
-from modulos import sesion1_diagnostico
+from modulos import sesion1_diagnostico, sesion2_descarbonizacion
 
 st.set_page_config(
     page_title="Retail Transformation Lab",
@@ -86,10 +86,14 @@ with st.sidebar:
         # filial y mezclarlas produciría un informe incoherente.
         if st.session_state.get("grupo") != grupo:
             st.session_state["respuestas"] = {}
+            st.session_state["respuestas2"] = {}
+            st.session_state["plan"] = {}
+            st.session_state["tutor_respuestas"] = {}
             st.session_state["paso"] = 0
+            st.session_state["paso2"] = 0
         st.session_state["grupo"] = grupo
 
-    if st.session_state.get("vista") == "sesion1":
+    if st.session_state.get("vista") in ("sesion1", "sesion2"):
         st.divider()
         if st.button("← Volver al inicio", use_container_width=True):
             st.session_state["vista"] = "inicio"
@@ -104,7 +108,7 @@ with st.sidebar:
 
 # ── Contenido principal ──────────────────────────────────────────────────────
 
-if st.session_state.get("vista") == "sesion1" and grupo:
+if st.session_state.get("vista") in ("sesion1", "sesion2") and grupo:
     filial_actual = filiales.obtener(grupo)
     st.markdown(
         marca.cabecera_compacta(f"{filial_actual.nombre} · Grupo {grupo}"),
@@ -130,6 +134,10 @@ filial = filiales.obtener(grupo)
 
 if st.session_state.get("vista") == "sesion1":
     sesion1_diagnostico.mostrar(grupo)
+    st.stop()
+
+if st.session_state.get("vista") == "sesion2":
+    sesion2_descarbonizacion.mostrar(grupo)
     st.stop()
 
 
@@ -180,6 +188,12 @@ for indice, sesion in enumerate(sesiones.SESIONES):
 
 st.divider()
 
-if st.button("Entrar en la Sesión 1 · Diagnóstico", type="primary"):
+entrada1, entrada2 = st.columns(2)
+if entrada1.button("Entrar en la Sesión 1 · Diagnóstico",
+                   type="primary", use_container_width=True):
     st.session_state["vista"] = "sesion1"
+    st.rerun()
+if entrada2.button("Entrar en la Sesión 2 · Descarbonización",
+                   use_container_width=True):
+    st.session_state["vista"] = "sesion2"
     st.rerun()
