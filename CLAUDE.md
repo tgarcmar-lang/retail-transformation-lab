@@ -100,10 +100,36 @@ sesión se reenvía el HTML en cada clic, así que allí va el pequeño.
 - [x] Guion del profesor para la Sesión 1 — **vive fuera del repositorio**,
       en `C:\Proyectos\retail-lab-profesor`
 
+- [x] Tutor de guardia (Gemini) en la Sesión 1, sin dependencias nuevas
+
 ### Siguiente
-- [ ] Asistente de IA (Gemini) que comente los resultados
-- [ ] Panel del profesor
 - [ ] Sesión 2: Descarbonización (objetivo: octubre)
+
+## El tutor de guardia
+
+Vive en `core/tutor.py`. Lee lo que ha escrito el grupo y devuelve **una
+pregunta**. El profesor no puede estar en cinco mesas a la vez; esto cubre
+los huecos.
+
+**Tres reglas que no se negocian:**
+
+1. **Nunca da la respuesta.** El contexto que se le envía contiene solo
+   cifras que el alumno ya tiene en pantalla, nunca el diagnóstico de la
+   filial. Hay pruebas que lo verifican.
+2. **Nunca para la clase.** Sin clave, sin cuota, sin red o con cualquier
+   fallo, devuelve una pregunta del banco escrito a mano en `RESERVA`. El
+   alumno no ve jamás un error.
+3. **No añade dependencias.** Se llama a la API REST con `requests`, que ya
+   viene con Streamlit. `requirements.txt` no se ha tocado.
+
+Además: se prueban varios modelos en orden (los nombres de Google se retiran),
+la respuesta se descarta si no es una pregunta corta, y hay un límite de 12
+consultas por grupo — pedagógico, no de cuota: sin límite, el ejercicio se
+convierte en pulsar hasta que salga la respuesta.
+
+**Clave:** `[gemini] api_key` en `st.secrets`. En Streamlit Cloud se pega en
+`Settings → Secrets`, nunca en el repositorio, que es público. Ver
+`.streamlit/secrets.toml.ejemplo`.
 
 ## Sesión 1 · cómo está montada
 
@@ -208,3 +234,18 @@ inverosímil.
 - **2026-07-29** — Asistente de IA aplazado a después de la Sesión 1. El texto
   de apoyo (pistas, avisos, explicaciones) está escrito a mano en el módulo:
   funciona sin cuota, sin clave y sin conexión a Google.
+- **2026-07-29** — Panel del profesor **descartado**, no aplazado. La
+  comparación de las cinco filiales ya está en el paso 5 y se puede proyectar
+  desde cualquier grupo. Lo único que aportaría de verdad —ver lo que han
+  escrito los alumnos— depende de la persistencia, no del panel.
+- **2026-07-29** — Persistencia **descartada también para la Sesión 2**. Cada
+  grupo llegará con su informe de la Sesión 1 y volverá a introducir su
+  conclusión, que es lo que hace un consultor con el entregable de la fase
+  anterior. Nos ahorra Supabase entero.
+- **2026-07-29** — Tutor de guardia construido llamando a la API REST de
+  Gemini en lugar de con el SDK de Google. Motivo: `requests` ya viene con
+  Streamlit, así que no se toca `requirements.txt` y desaparece el riesgo de
+  que una dependencia nueva tumbe el despliegue.
+- **2026-07-29** — El tutor solo pregunta, nunca responde. Si el modelo
+  devuelve una afirmación, una parrafada o varias preguntas, se descarta y
+  sale una del banco escrito a mano. Regalar el hallazgo destruiría la sesión.

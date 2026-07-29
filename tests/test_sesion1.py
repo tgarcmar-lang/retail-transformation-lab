@@ -200,6 +200,74 @@ def test_el_informe_es_html_bien_formado():
     assert not comprobador.desajustes
 
 
+# --------------------------------------------------------------------------
+# El tutor de guardia, dentro de la aplicación de verdad
+# --------------------------------------------------------------------------
+
+def _botones_de_tutor(prueba):
+    return [b for b in prueba.button if b.label == "Preguntar al tutor"]
+
+
+@pytest.mark.parametrize("paso", [1, 2, 3, 4])
+def test_cada_paso_con_pregunta_ofrece_el_tutor(paso):
+    prueba = _entrar_en_sesion1("A", paso)
+    assert _botones_de_tutor(prueba), f"Falta el tutor en el paso {paso + 1}"
+
+
+def test_el_primer_paso_no_tiene_tutor():
+    """El paso 1 es solo lectura: no hay nada escrito sobre lo que preguntar."""
+    assert not _botones_de_tutor(_entrar_en_sesion1("A", 0))
+
+
+@pytest.mark.parametrize("grupo", GRUPOS)
+def test_el_tutor_responde_sin_clave_configurada(grupo):
+    """Así estará el 8 de septiembre si Google falla: tiene que funcionar."""
+    prueba = _entrar_en_sesion1(grupo, 1)
+    prueba.text_area[0].set_value("Diciembre es el mes más fuerte.").run()
+    _botones_de_tutor(prueba)[0].click().run()
+
+    assert not prueba.exception
+    avisos = [i.value for i in prueba.info]
+    assert any("El tutor os pregunta" in a for a in avisos)
+    assert any(a.strip().endswith("?") for a in avisos)
+
+
+def test_el_tutor_no_ensena_nunca_un_error_al_alumno():
+    prueba = _entrar_en_sesion1("D", 2)
+    _botones_de_tutor(prueba)[0].click().run()
+    assert not prueba.exception
+    assert not prueba.error, "El alumno no puede ver un error del tutor"
+
+
+def test_el_tutor_funciona_con_la_caja_vacia():
+    """Un grupo atascado pulsará el botón sin haber escrito nada."""
+    prueba = _entrar_en_sesion1("E", 3)
+    _botones_de_tutor(prueba)[0].click().run()
+    assert not prueba.exception
+    assert any("El tutor os pregunta" in i.value for i in prueba.info)
+
+
+def test_el_tutor_tiene_un_limite_de_consultas():
+    from modulos import sesion1_diagnostico as sesion
+
+    prueba = _entrar_en_sesion1("A", 1)
+    prueba.session_state["tutor_usos"] = sesion.LIMITE_TUTOR
+    prueba.run()
+    assert _botones_de_tutor(prueba)[0].disabled
+
+
+def test_la_pregunta_del_tutor_no_va_al_informe():
+    """El informe recoge lo que piensa el grupo, no lo que sugirió la máquina."""
+    prueba = _entrar_en_sesion1("C", 1)
+    prueba.text_area[0].set_value("Nuestra conclusión.").run()
+    _botones_de_tutor(prueba)[0].click().run()
+
+    documento = informe.generar("C", prueba.session_state["respuestas"])
+    pregunta = prueba.session_state["tutor_respuestas"]["paso2"][0]
+    assert "Nuestra conclusión." in documento
+    assert pregunta not in documento
+
+
 @pytest.mark.parametrize("grupo", GRUPOS)
 def test_el_nombre_del_fichero_identifica_al_grupo(grupo):
     nombre = informe.nombre_de_fichero(grupo)

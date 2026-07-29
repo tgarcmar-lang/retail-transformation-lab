@@ -16,7 +16,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
-from core import datos, filiales, informe, kpis
+from core import datos, filiales, informe, kpis, tutor
 
 VERDE = "#0F766E"
 GRIS = "#94A3B8"
@@ -67,7 +67,13 @@ def _grafico(figura: go.Figure, alto: int = 320) -> None:
     st.plotly_chart(figura, use_container_width=True)
 
 
-def _pregunta(clave: str) -> None:
+#: Cuántas veces puede un grupo pedir ayuda al tutor en toda la sesión.
+#: No es por la cuota: es pedagógico. Si pudieran pulsar sin límite, el
+#: ejercicio se convertiría en ir preguntando hasta que salga la respuesta.
+LIMITE_TUTOR = 12
+
+
+def _pregunta(clave: str, grupo: str | None = None) -> None:
     """Caja de respuesta. Lo escrito se guarda y acaba en el informe."""
     st.markdown("##### Vuestra respuesta")
     st.caption("Se guarda sola y aparecerá en el informe que descarguéis al final.")
@@ -80,6 +86,56 @@ def _pregunta(clave: str) -> None:
         placeholder="Escribid aquí lo que habéis visto en los datos…",
     )
     st.session_state["respuestas"][clave] = valor
+    if grupo:
+        _tutor(clave, grupo)
+
+
+def _tutor(clave: str, grupo: str) -> None:
+    """El tutor de guardia: devuelve una pregunta, nunca una respuesta.
+
+    Si no hay clave de Google configurada, o si Google falla, sale igual una
+    pregunta escrita a mano. Desde fuera no se nota la diferencia salvo por
+    la nota al pie, que dice la verdad sobre de dónde viene.
+    """
+    st.session_state.setdefault("tutor_usos", 0)
+    st.session_state.setdefault("tutor_respuestas", {})
+
+    usos = st.session_state["tutor_usos"]
+    agotado = usos >= LIMITE_TUTOR
+
+    izquierda, derecha = st.columns([1, 3])
+    pulsado = izquierda.button(
+        "Preguntar al tutor",
+        key=f"tutor_{clave}",
+        disabled=agotado,
+        help="Lee lo que habéis escrito y os devuelve una pregunta para "
+             "haceros avanzar. No os va a dar la respuesta.",
+    )
+    if agotado:
+        derecha.caption(
+            "Habéis gastado las consultas al tutor. A partir de aquí, "
+            "preguntad al profesor."
+        )
+
+    if pulsado:
+        escrito = st.session_state["respuestas"].get(clave, "")
+        try:
+            secretos = st.secrets
+        except Exception:
+            secretos = None
+        with st.spinner("El tutor está leyendo lo que habéis escrito…"):
+            texto, del_tutor = tutor.preguntar(
+                grupo, clave, escrito, secretos, semilla=usos
+            )
+        st.session_state["tutor_respuestas"][clave] = (texto, del_tutor)
+        st.session_state["tutor_usos"] = usos + 1
+
+    guardada = st.session_state["tutor_respuestas"].get(clave)
+    if guardada:
+        texto, del_tutor = guardada
+        st.info(f"**El tutor os pregunta:** {texto}")
+        if not del_tutor:
+            st.caption("Pregunta del banco de la asignatura.")
 
 
 def _pista(texto: str) -> None:
@@ -206,7 +262,7 @@ def _paso_como_vende(grupo: str) -> None:
                    "emisiones que eso supone")
 
     st.divider()
-    _pregunta("paso2")
+    _pregunta("paso2", grupo)
 
 
 # --------------------------------------------------------------------------
@@ -286,7 +342,7 @@ def _paso_como_opera(grupo: str) -> None:
         )
 
     st.divider()
-    _pregunta("paso3")
+    _pregunta("paso3", grupo)
 
 
 # --------------------------------------------------------------------------
@@ -342,7 +398,7 @@ def _paso_que_emite(grupo: str) -> None:
     )
 
     st.divider()
-    _pregunta("paso4")
+    _pregunta("paso4", grupo)
 
 
 # --------------------------------------------------------------------------
@@ -409,7 +465,7 @@ def _paso_diagnostico(grupo: str) -> None:
     st.divider()
     st.markdown("### El diagnóstico de vuestro grupo")
     for clave in ("diagnostico", "evidencia", "coste", "propuesta"):
-        _pregunta(clave)
+        _pregunta(clave, grupo)
 
     st.divider()
     _descargar_informe(grupo)
