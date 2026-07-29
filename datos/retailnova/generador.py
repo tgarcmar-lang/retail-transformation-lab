@@ -523,7 +523,7 @@ def generar_rutas(centros: pd.DataFrame) -> pd.DataFrame:
         })
         bloque["pct_km_en_vacio"] = (bloque["km_en_vacio"] / bloque["km_totales"]).round(3)
         bloque["entregas_fallidas"] = rng.binomial(
-            bloque["paradas"].values, 0.022 if g != "E" else 0.012
+            bloque["paradas"].values, p.TASA_ENTREGA_FALLIDA[g]
         )
         bloques.append(bloque)
 
@@ -721,7 +721,7 @@ def generar_inventario(ventas_categoria: pd.DataFrame) -> pd.DataFrame:
     ruido_rot = rng.normal(1.0, 0.10, len(inventario)).clip(0.6, 1.5)
     ruido_merma = rng.normal(1.0, 0.18, len(inventario)).clip(0.4, 2.0)
 
-    rotacion_real = rotacion * ruido_rot
+    rotacion_real = rotacion * ruido_rot * inventario["grupo"].map(p.FACTOR_ROTACION)
     # Stock medio = coste de las ventas del periodo dividido por la rotación.
     inventario["stock_medio_eur"] = (
         inventario["ventas_eur"] * 12 * 0.62 / rotacion_real
@@ -738,6 +738,65 @@ def generar_inventario(ventas_categoria: pd.DataFrame) -> pd.DataFrame:
         "stock_medio_eur", "rotacion_anualizada", "dias_cobertura",
         "merma_pct", "merma_eur",
     ]]
+
+
+def generar_compras(proveedores: pd.DataFrame) -> pd.DataFrame:
+    """Compras a proveedores por filial, proveedor y mes.
+
+    Sin esta tabla el problema de Barcelona sería invisible: su dependencia
+    asiática solo se ve si se puede cruzar cada compra con el país de origen
+    y el plazo de entrega real, no el prometido.
+    """
+    rng = _rng(12)
+    meses = rango_de_meses()
+    filas = []
+
+    for g in p.GRUPOS:
+        # Cartera de proveedores de la filial, respetando su mix de origen.
+        cartera = []
+        for origen, peso in p.MIX_ORIGEN[g].items():
+            candidatos = proveedores.index[proveedores["pais_origen"] == origen].to_numpy()
+            if len(candidatos) == 0:
+                continue
+            cuantos = min(len(candidatos), max(1, round(peso * 26)))
+            cartera.extend(rng.choice(candidatos, size=cuantos, replace=False).tolist())
+
+        # Las compras son el coste de la mercancía. El porcentaje depende de
+        # dónde compra la filial: comprar en Asia sale más barato.
+        compras_2025 = p.ventas_anuales(g) * p.coste_mercancia(g)
+        reparto = rng.random(len(cartera)) + 0.35
+        reparto = reparto / reparto.sum()
+
+        for indice, peso_proveedor in zip(cartera, reparto):
+            proveedor = proveedores.loc[indice]
+            base = p.ORIGENES_PROVEEDOR[proveedor["pais_origen"]]
+            for mes in meses:
+                # Se compra por delante de lo que se vende: el pico de compra
+                # se adelanta dos meses al de venta.
+                mes_venta = (mes.month + 1) % 12 + 1
+                estacional = p.FACTOR_MENSUAL[mes_venta]
+                anual = compras_2025 if mes.year == 2025 else compras_2025 / (1 + p.CRECIMIENTO_ANUAL[g])
+                importe = anual * peso_proveedor / 12 * estacional * rng.normal(1.0, 0.14)
+                entregas = max(1, int(round(30 / max(4, proveedor["plazo_entrega_dias"]) * rng.normal(1.0, 0.2))))
+                plazo_real = float(np.clip(
+                    rng.normal(proveedor["plazo_entrega_dias"], base["plazo"] * 0.28),
+                    2, base["plazo"] * 2.5,
+                ))
+                filas.append({
+                    "mes": pd.Timestamp(mes),
+                    "grupo": g,
+                    "codigo_proveedor": proveedor["codigo_proveedor"],
+                    "pais_origen": proveedor["pais_origen"],
+                    "categoria": proveedor["categoria"],
+                    "importe_eur": round(max(0.0, importe), 2),
+                    "entregas": entregas,
+                    "entregas_a_tiempo": int(rng.binomial(entregas, proveedor["fiabilidad_entrega"])),
+                    "plazo_real_dias": round(plazo_real, 1),
+                })
+
+    return pd.DataFrame(filas).sort_values(
+        ["mes", "grupo", "codigo_proveedor"], ignore_index=True
+    )
 
 
 def generar_factores_emision() -> pd.DataFrame:
@@ -769,6 +828,7 @@ def generar_todo(destino: Path = DESTINO) -> dict[str, pd.DataFrame]:
     inventario = generar_inventario(ventas_categoria)
     residuos = generar_residuos(tiendas, centros, ventas_categoria)
     refrigerantes = generar_refrigerantes(tiendas)
+    compras = generar_compras(proveedores)
     factores = generar_factores_emision()
 
     tablas = {
@@ -776,6 +836,7 @@ def generar_todo(destino: Path = DESTINO) -> dict[str, pd.DataFrame]:
         "centros": centros,
         "flota": flota,
         "proveedores": proveedores,
+        "compras": compras,
         "ventas_diarias": ventas_diarias,
         "ventas_categoria": ventas_categoria,
         "pedidos_online": pedidos_online,

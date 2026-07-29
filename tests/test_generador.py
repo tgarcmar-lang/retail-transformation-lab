@@ -31,7 +31,8 @@ def tablas():
         "tiendas": tiendas,
         "centros": centros,
         "flota": flota,
-        "proveedores": gen.generar_proveedores(),
+        "proveedores": (proveedores := gen.generar_proveedores()),
+        "compras": gen.generar_compras(proveedores),
         "ventas_diarias": ventas_diarias,
         "ventas_categoria": ventas_categoria,
         "pedidos_online": gen.generar_pedidos_online(tiendas),
@@ -284,13 +285,39 @@ def test_valencia_tiene_la_mayor_merma(tablas):
 
 
 def test_barcelona_tiene_los_plazos_de_entrega_mas_largos(tablas):
-    """Su dependencia asiática debe verse en el plazo medio ponderado."""
-    plazos = {
-        g: sum(p.MIX_ORIGEN[g][o] * p.ORIGENES_PROVEEDOR[o]["plazo"]
-               for o in p.ORIGENES_PROVEEDOR)
-        for g in p.GRUPOS
-    }
-    assert max(plazos, key=plazos.get) == "B"
+    """El hallazgo del grupo B, medido sobre los datos que ve el alumno."""
+    compras = tablas["compras"]
+    plazo = compras.groupby("grupo").apply(
+        lambda d: (d["plazo_real_dias"] * d["importe_eur"]).sum() / d["importe_eur"].sum(),
+        include_groups=False,
+    )
+    assert plazo.idxmax() == "B"
+    assert plazo["B"] > plazo["D"] * 1.5
+
+
+def test_barcelona_es_la_mas_dependiente_de_asia(tablas):
+    compras = tablas["compras"]
+    asia = ["China", "Bangladés", "Vietnam"]
+    cuota = compras.groupby("grupo").apply(
+        lambda d: d[d["pais_origen"].isin(asia)]["importe_eur"].sum() / d["importe_eur"].sum(),
+        include_groups=False,
+    )
+    assert cuota.idxmax() == "B"
+
+
+def test_barcelona_inmoviliza_mas_stock(tablas):
+    """La consecuencia económica del plazo largo: peor rotación."""
+    cobertura = tablas["inventario"].groupby("grupo")["dias_cobertura"].mean()
+    assert cobertura.idxmax() == "B"
+
+
+def test_las_compras_guardan_proporcion_con_las_ventas(tablas):
+    """El coste de la mercancía debe rondar el 60 % de la venta."""
+    compras = tablas["compras"]
+    compras_2025 = compras[compras["mes"].dt.year == 2025].groupby("grupo")["importe_eur"].sum()
+    for grupo in p.GRUPOS:
+        ratio = compras_2025[grupo] / p.ventas_anuales(grupo)
+        assert 0.5 < ratio < 0.7
 
 
 # --------------------------------------------------------------------------

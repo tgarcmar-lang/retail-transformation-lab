@@ -200,6 +200,12 @@ ANTIGUEDAD_FLOTA = {"A": 5.2, "B": 4.1, "C": 6.8, "D": 8.4, "E": 3.3}
 PARADAS_POR_RUTA = {"A": 14, "B": 13, "C": 12, "D": 8, "E": 12}
 OCUPACION_MEDIA = {"A": 0.78, "B": 0.75, "C": 0.72, "D": 0.61, "E": 0.83}
 
+#: Entregas que fallan al primer intento. Es el coste oculto de la última
+#: milla urbana: congestión, imposibilidad de aparcar, portales cerrados y
+#: destinatarios ausentes. Cada fallo obliga a repetir el viaje, así que
+#: paga dos veces, en euros y en emisiones. Es el problema de Madrid.
+TASA_ENTREGA_FALLIDA = {"A": 0.041, "B": 0.034, "C": 0.022, "D": 0.018, "E": 0.012}
+
 # --------------------------------------------------------------------------
 # Energía
 # --------------------------------------------------------------------------
@@ -289,6 +295,12 @@ ROTACION_ANUAL = {
     "moda_belleza": 3.4, "hogar_electronica": 4.1, "alimentacion_hosteleria": 18.5,
 }
 
+#: Penalización de rotación por filial. Un plazo de entrega largo obliga a
+#: mantener más stock: Barcelona rota peor porque compra en Asia. Es la
+#: consecuencia económica de su problema, y lo que lo hace visible en el
+#: balance además de en la cadena de suministro.
+FACTOR_ROTACION = {"A": 1.00, "B": 0.84, "C": 1.06, "D": 1.10, "E": 1.12}
+
 #: Merma como porcentaje de las ventas de la categoría.
 MERMA_BASE = {
     "moda_belleza": 0.012, "hogar_electronica": 0.006, "alimentacion_hosteleria": 0.028,
@@ -314,6 +326,18 @@ ORIGENES_PROVEEDOR = {
     "Bangladés": {"plazo": 55, "fiabilidad": 0.74},
     "Vietnam": {"plazo": 52, "fiabilidad": 0.77},
 }
+
+#: Coste relativo de comprar en cada origen. Comprar en Asia sale más barato:
+#: es la contrapartida del plazo largo. Sin esto, Barcelona sería solo una
+#: filial con un problema, cuando en realidad tiene un dilema — que es mucho
+#: más interesante de discutir en clase.
+COSTE_RELATIVO_ORIGEN = {
+    "España": 1.00, "Portugal": 0.97, "Italia": 1.02, "Turquía": 0.90,
+    "China": 0.78, "Bangladés": 0.74, "Vietnam": 0.76,
+}
+
+#: Coste de la mercancía sobre ventas, antes de ajustar por origen.
+COSTE_MERCANCIA_BASE = 0.63
 
 #: Peso de cada origen en las compras de cada filial.
 MIX_ORIGEN = {
@@ -393,6 +417,21 @@ def cuota_online(grupo: str) -> float:
         MIX_CATEGORIAS[grupo][cat] * PENETRACION_ONLINE[grupo][cat]
         for cat in CATEGORIAS
     )
+
+
+def coste_mercancia(grupo: str) -> float:
+    """Coste de la mercancía sobre ventas.
+
+    Depende de dónde compra la filial. Barcelona, que es la que más compra en
+    Asia, es también la que compra más barato: paga ese ahorro con plazos de
+    entrega el doble de largos y con el stock inmovilizado que eso obliga a
+    mantener. Ese intercambio es la discusión que debe tener el grupo B.
+    """
+    indice = sum(
+        MIX_ORIGEN[grupo][origen] * COSTE_RELATIVO_ORIGEN[origen]
+        for origen in MIX_ORIGEN[grupo]
+    )
+    return COSTE_MERCANCIA_BASE * indice
 
 
 def plantilla(grupo: str) -> int:

@@ -80,11 +80,49 @@ La inflación de alcance es el principal riesgo de este proyecto.
 - [x] `requirements.txt`, `.gitignore`, configuración de Streamlit
 - [x] Repositorio en GitHub y despliegue automático en Streamlit Cloud
 - [x] Generador de datos de las 5 filiales (`datos/retailnova/`), validado
-      con Tomás y cubierto por 98 pruebas
+      con Tomás y cubierto por pruebas
+- [x] Sesión 1 · Diagnóstico: recorrido guiado de 5 pasos e informe
+      descargable. 240 pruebas en verde, incluido el recorrido completo de
+      los cinco grupos con el banco de pruebas de Streamlit
 
 ### Siguiente
-- [ ] Sesión 1: Diagnóstico — **la tarea crítica ahora**
+- [ ] Asistente de IA (Gemini) que comente los resultados
 - [ ] Panel del profesor
+- [ ] Sesión 2: Descarbonización (objetivo: octubre)
+
+## Sesión 1 · cómo está montada
+
+Cinco pasos, unos 60-75 minutos de clase, guiados (no exploración libre: es
+la primera vez que los alumnos tocan la herramienta).
+
+1. **Tu filial** — retrato y parque de tiendas
+2. **Cómo vende** — estacionalidad, categorías y canal online
+3. **Cómo opera** — reparto, proveedores e inventario
+4. **Qué emite** — energía, combustible y huella de carbono
+5. **Tu diagnóstico** — comparación con las otras cuatro filiales e informe
+
+Cada paso termina con una pregunta abierta. Las respuestas se guardan en
+`st.session_state` y salen impresas en el informe que descarga el grupo.
+
+**Decisión sobre el informe:** HTML autocontenido, no Word ni PDF. Cero
+dependencias nuevas, se imprime a PDF con Ctrl+P y no puede romper el
+despliegue. Está en `core/informe.py`.
+
+**Cada filial lidera en algo y falla en algo distinto.** Está comprobado por
+pruebas, porque si dos grupos llegasen al mismo hallazgo la puesta en común
+perdería sentido, y un grupo que no lidera en nada se desmotiva.
+
+| Grupo | Lidera en | Su problema |
+|---|---|---|
+| A · Madrid | Ventas, €/m², cuota online | Entregas fallidas: la última milla urbana |
+| B · Barcelona | Margen bruto | Plazo de entrega y stock inmovilizado |
+| C · Valencia | Puntualidad de proveedores | Energía del frío y merma |
+| D · Sevilla | Plazo de entrega | Kilómetros en vacío y gasóleo |
+| E · Bilbao | Casi todos los ratios | No tiene escala: es la más pequeña |
+
+Barcelona es el caso más interesante: compra más barato **porque** compra en
+Asia, y paga ese margen con plazos del doble y stock parado. No tiene un
+defecto, tiene un dilema.
 
 ## El caso: RetailNova Europa
 
@@ -135,3 +173,15 @@ inverosímil.
 - **2026-07-29** — Datos: 24 meses (2024-2025), granularidad diaria por tienda,
   incluyendo ya las variables ambientales de la Sesión 2. Regenerar en octubre
   habría cambiado números que los alumnos ya habrían usado en septiembre.
+- **2026-07-29** — Sesión 1 guiada por pasos, no exploración libre. Con la
+  exploración libre un grupo puede quedarse en blanco y perder la sesión entera.
+- **2026-07-29** — Informe en HTML y no en Word ni PDF: no añade dependencias,
+  y cada dependencia nueva es un riesgo de despliegue (ya nos pasó con `pillow`).
+- **2026-07-29** — Añadido `compras.csv` y el coste de mercancía por origen.
+  Sin ellos el grupo B no tenía forma de descubrir su problema en los datos,
+  ni de ver que su margen depende justamente de lo que se lo causa.
+- **2026-07-29** — Panel del profesor aplazado. Prioridad: que la Sesión 1
+  funcione impecablemente el día 8.
+- **2026-07-29** — Asistente de IA aplazado a después de la Sesión 1. El texto
+  de apoyo (pistas, avisos, explicaciones) está escrito a mano en el módulo:
+  funciona sin cuota, sin clave y sin conexión a Google.

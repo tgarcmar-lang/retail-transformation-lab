@@ -6,6 +6,7 @@ Escuela Politécnica · Universidad Camilo José Cela
 import streamlit as st
 
 from core import filiales, sesiones
+from modulos import sesion1_diagnostico
 
 st.set_page_config(
     page_title="Retail Transformation Lab",
@@ -67,7 +68,18 @@ with st.sidebar:
     grupo = opciones.get(elegido)
 
     if grupo:
+        # Si el grupo cambia, se descarta lo escrito: son respuestas de otra
+        # filial y mezclarlas produciría un informe incoherente.
+        if st.session_state.get("grupo") != grupo:
+            st.session_state["respuestas"] = {}
+            st.session_state["paso"] = 0
         st.session_state["grupo"] = grupo
+
+    if st.session_state.get("vista") == "sesion1":
+        st.divider()
+        if st.button("← Volver al inicio", use_container_width=True):
+            st.session_state["vista"] = "inicio"
+            st.rerun()
 
     st.divider()
     st.caption(
@@ -100,6 +112,16 @@ if not grupo:
     st.stop()
 
 filial = filiales.obtener(grupo)
+
+# ── Sesión 1 ─────────────────────────────────────────────────────────────────
+
+if st.session_state.get("vista") == "sesion1":
+    st.caption(f"{filial.nombre} · Grupo {grupo}")
+    sesion1_diagnostico.mostrar(grupo)
+    st.stop()
+
+
+# ── Portada de la filial ─────────────────────────────────────────────────────
 
 st.success(f"Diriges **{filial.nombre}** ({filial.codigo})")
 
@@ -147,6 +169,5 @@ for indice, sesion in enumerate(sesiones.SESIONES):
 st.divider()
 
 if st.button("Entrar en la Sesión 1 · Diagnóstico", type="primary"):
-    st.warning(
-        "La Sesión 1 está en construcción. Estará lista para el 8 de septiembre."
-    )
+    st.session_state["vista"] = "sesion1"
+    st.rerun()
