@@ -85,6 +85,9 @@ La inflación de alcance es el principal riesgo de este proyecto.
       descargable. 240 pruebas en verde, incluido el recorrido completo de
       los cinco grupos con el banco de pruebas de Streamlit
 
+- [x] Guion del profesor para la Sesión 1 — **vive fuera del repositorio**,
+      en `C:\Proyectos\retail-lab-profesor`
+
 ### Siguiente
 - [ ] Asistente de IA (Gemini) que comente los resultados
 - [ ] Panel del profesor
@@ -182,6 +185,14 @@ inverosímil.
   ni de ver que su margen depende justamente de lo que se lo causa.
 - **2026-07-29** — Panel del profesor aplazado. Prioridad: que la Sesión 1
   funcione impecablemente el día 8.
+- **2026-07-29** — Guion del profesor en Word y no en Markdown: se imprime,
+  se anota y se lleva al aula.
+- **2026-07-29** — **El material del profesor no entra en el repositorio.**
+  El repositorio es público (requisito del despliegue gratuito) y el guion
+  lleva escrito el hallazgo de cada filial. Vive en
+  `C:\Proyectos\retail-lab-profesor`, junto al script que lo genera, y
+  `.gitignore` bloquea `docs/`, `guion*` y `*.docx` por si acaso.
+  Nunca llegó a subirse: no hay que limpiar el historial.
 - **2026-07-29** — Asistente de IA aplazado a después de la Sesión 1. El texto
   de apoyo (pistas, avisos, explicaciones) está escrito a mano en el módulo:
   funciona sin cuota, sin clave y sin conexión a Google.

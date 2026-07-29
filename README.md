@@ -27,7 +27,13 @@ streamlit run app.py
 core/      Lógica de negocio (sin Streamlit dentro)
 modulos/   Una interfaz por sesión de clase
 datos/     Generador y datasets de las cinco filiales
-profesor/  Panel de comparación entre grupos
+tests/     Pruebas: datos, cálculos y recorrido completo de la sesión
 ```
 
 El estado del proyecto y las decisiones tomadas están en `CLAUDE.md`.
+
+## Aviso
+
+**Este repositorio es público.** El material del profesor —guiones de clase,
+que llevan escrito el hallazgo de cada filial— se guarda fuera, y `.gitignore`
+bloquea `docs/`, `guion*` y `*.docx` para que no entre por descuido.

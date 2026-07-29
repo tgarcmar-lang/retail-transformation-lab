@@ -6,3 +6,10 @@ venv/
 .DS_Store
 Thumbs.db
 *.log
+
+# Material del profesor. NO debe entrar aquí: el repositorio es público y
+# los guiones llevan escrito el hallazgo de cada filial. Viven fuera, en
+# C:\Proyectos\retail-lab-profesor
+docs/
+guion*
+*.docx
