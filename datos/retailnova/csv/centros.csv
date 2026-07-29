@@ -1,0 +1,10 @@
+codigo_centro,grupo,superficie_m2,tiendas_servidas,automatizado,muelles
+CL-MAD-01,A,8000,12.7,False,8
+CL-MAD-02,A,8000,12.7,False,8
+CL-MAD-03,A,8000,12.7,False,8
+CL-BCN-01,B,9000,14.0,False,10
+CL-BCN-02,B,9000,14.0,False,10
+CL-VLC-01,C,7000,13.5,False,7
+CL-VLC-02,C,7000,13.5,False,7
+CL-SEV-01,D,6500,27.0,False,7
+CL-BIO-01,E,5500,14.0,True,6

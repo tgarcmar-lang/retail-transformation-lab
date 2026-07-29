@@ -1,0 +1,135 @@
+codigo_tienda,grupo,formato,nombre_formato,emplazamiento,superficie_m2,anio_apertura,ventas_por_m2_eur,ventas_anuales_eur
+RN-MAD-GA01,A,gran_almacen,Gran almacén,Castellana,23133,2013,4131.7,95578597.64
+RN-MAD-GA02,A,gran_almacen,Gran almacén,Preciados,15731,1998,4131.7,64995760.14
+RN-MAD-GA03,A,gran_almacen,Gran almacén,Goya,18486,2015,4131.7,76378591.45
+RN-MAD-HI01,A,hipermercado,Hipermercado / Gourmet,Nuevos Ministerios,2724,2012,5001.52,13624145.0
+RN-MAD-HI02,A,hipermercado,Hipermercado / Gourmet,Princesa,2377,2015,5001.52,11888616.98
+RN-MAD-HI03,A,hipermercado,Hipermercado / Gourmet,Arturo Soria,2710,1980,5001.52,13554123.7
+RN-MAD-HI04,A,hipermercado,Hipermercado / Gourmet,Méndez Álvaro,2906,1985,5001.52,14534421.94
+RN-MAD-HI05,A,hipermercado,Hipermercado / Gourmet,Las Rozas,2862,1996,5001.52,14314354.99
+RN-MAD-ES01,A,especializada,Tienda especializada,Pozuelo,1025,2012,5871.35,6018137.98
+RN-MAD-ES02,A,especializada,Tienda especializada,Alcobendas,710,2004,5871.35,4168661.43
+RN-MAD-ES03,A,especializada,Tienda especializada,Getafe,877,1988,5871.35,5149177.57
+RN-MAD-ES04,A,especializada,Tienda especializada,Móstoles,870,1997,5871.35,5108078.09
+RN-MAD-ES05,A,especializada,Tienda especializada,Alcalá,766,1991,5871.35,4497457.26
+RN-MAD-ES06,A,especializada,Tienda especializada,Leganés,885,2014,5871.35,5196148.4
+RN-MAD-ES07,A,especializada,Tienda especializada,Fuenlabrada,924,2019,5871.35,5425131.21
+RN-MAD-ES08,A,especializada,Tienda especializada,Vallecas,922,2002,5871.35,5413388.5
+RN-MAD-ES09,A,especializada,Tienda especializada,Tetuán,852,1998,5871.35,5002393.71
+RN-MAD-ES10,A,especializada,Tienda especializada,Chamberí,891,1990,5871.35,5231376.52
+RN-MAD-ES11,A,especializada,Tienda especializada,Carabanchel,740,1980,5871.35,4344802.05
+RN-MAD-ES12,A,especializada,Tienda especializada,Barajas,918,1992,5871.35,5389903.08
+RN-MAD-ES13,A,especializada,Tienda especializada,Castellana 2,881,2015,5871.35,5172662.98
+RN-MAD-ES14,A,especializada,Tienda especializada,Preciados 2,709,2009,5871.35,4162790.07
+RN-MAD-ES15,A,especializada,Tienda especializada,Goya 2,798,1983,5871.35,4685340.59
+RN-MAD-ES16,A,especializada,Tienda especializada,Nuevos Ministerios 2,823,1993,5871.35,4832124.44
+RN-MAD-ES17,A,especializada,Tienda especializada,Princesa 2,875,2000,5871.35,5137434.86
+RN-MAD-ES18,A,especializada,Tienda especializada,Arturo Soria 2,955,1993,5871.35,5607143.19
+RN-MAD-ES19,A,especializada,Tienda especializada,Méndez Álvaro 2,891,1996,5871.35,5231376.52
+RN-MAD-ES20,A,especializada,Tienda especializada,Las Rozas 2,853,2022,5871.35,5008265.07
+RN-MAD-CV01,A,conveniencia,Conveniencia,Pozuelo 2,355,2021,6958.64,2470317.09
+RN-MAD-CV02,A,conveniencia,Conveniencia,Alcobendas 2,374,2013,6958.64,2602531.25
+RN-MAD-CV03,A,conveniencia,Conveniencia,Getafe 2,351,1978,6958.64,2442482.53
+RN-MAD-CV04,A,conveniencia,Conveniencia,Móstoles 2,408,2000,6958.64,2839125.0
+RN-MAD-CV05,A,conveniencia,Conveniencia,Alcalá 2,305,2004,6958.64,2122385.11
+RN-MAD-CV06,A,conveniencia,Conveniencia,Leganés 2,350,1992,6958.64,2435523.89
+RN-MAD-CV07,A,conveniencia,Conveniencia,Fuenlabrada 2,338,1996,6958.64,2352020.22
+RN-MAD-CV08,A,conveniencia,Conveniencia,Vallecas 2,418,1995,6958.64,2908711.39
+RN-MAD-CV09,A,conveniencia,Conveniencia,Tetuán 2,420,2022,6958.64,2922628.67
+RN-MAD-CV10,A,conveniencia,Conveniencia,Chamberí 2,390,1997,6958.64,2713869.48
+RN-BCN-GA01,B,gran_almacen,Gran almacén,Plaça Catalunya,16995,2006,4013.76,68213849.04
+RN-BCN-GA02,B,gran_almacen,Gran almacén,Diagonal,19676,2004,4013.76,78974739.25
+RN-BCN-HI01,B,hipermercado,Hipermercado / Gourmet,Gràcia,2209,2022,4858.76,10732995.81
+RN-BCN-HI02,B,hipermercado,Hipermercado / Gourmet,Sant Cugat,3288,2014,4858.76,15975595.39
+RN-BCN-HI03,B,hipermercado,Hipermercado / Gourmet,Badalona,2219,2006,4858.76,10781583.38
+RN-BCN-HI04,B,hipermercado,Hipermercado / Gourmet,Hospitalet,2776,2002,4858.76,13487911.43
+RN-BCN-ES01,B,especializada,Tienda especializada,Sabadell,712,1980,5703.76,4061073.97
+RN-BCN-ES02,B,especializada,Tienda especializada,Terrassa,824,1994,5703.76,4699894.59
+RN-BCN-ES03,B,especializada,Tienda especializada,Mataró,849,1996,5703.76,4842488.48
+RN-BCN-ES04,B,especializada,Tienda especializada,Sitges,793,1987,5703.76,4523078.17
+RN-BCN-ES05,B,especializada,Tienda especializada,Cornellà,858,2004,5703.76,4893822.28
+RN-BCN-ES06,B,especializada,Tienda especializada,Granollers,835,2015,5703.76,4762635.9
+RN-BCN-ES07,B,especializada,Tienda especializada,Manresa,826,2006,5703.76,4711302.1
+RN-BCN-ES08,B,especializada,Tienda especializada,Vilanova,642,1991,5703.76,3661811.08
+RN-BCN-ES09,B,especializada,Tienda especializada,Plaça Catalunya 2,851,1993,5703.76,4853895.99
+RN-BCN-ES10,B,especializada,Tienda especializada,Diagonal 2,771,1990,5703.76,4397595.54
+RN-BCN-ES11,B,especializada,Tienda especializada,Gràcia 2,812,1992,5703.76,4631449.52
+RN-BCN-ES12,B,especializada,Tienda especializada,Sant Cugat 2,715,2020,5703.76,4078185.23
+RN-BCN-ES13,B,especializada,Tienda especializada,Badalona 2,839,2007,5703.76,4785450.92
+RN-BCN-ES14,B,especializada,Tienda especializada,Hospitalet 2,901,2000,5703.76,5139083.77
+RN-BCN-CV01,B,conveniencia,Conveniencia,Sabadell 2,366,1988,6760.01,2474164.73
+RN-BCN-CV02,B,conveniencia,Conveniencia,Terrassa 2,401,2021,6760.01,2710765.18
+RN-BCN-CV03,B,conveniencia,Conveniencia,Mataró 2,433,2022,6760.01,2927085.6
+RN-BCN-CV04,B,conveniencia,Conveniencia,Sitges 2,328,2020,6760.01,2217284.24
+RN-BCN-CV05,B,conveniencia,Conveniencia,Cornellà 2,344,2005,6760.01,2325444.45
+RN-BCN-CV06,B,conveniencia,Conveniencia,Granollers 2,356,1999,6760.01,2406564.6
+RN-BCN-CV07,B,conveniencia,Conveniencia,Manresa 2,362,2006,6760.01,2447124.68
+RN-BCN-CV08,B,conveniencia,Conveniencia,Vilanova 2,362,1981,6760.01,2447124.68
+RN-VLC-GA01,C,gran_almacen,Gran almacén,Colón,16725,1988,3235.71,54117305.28
+RN-VLC-HI01,C,hipermercado,Hipermercado / Gourmet,Ruzafa,2971,1984,3916.91,11637131.1
+RN-VLC-HI02,C,hipermercado,Hipermercado / Gourmet,Campanar,3140,2007,3916.91,12299088.4
+RN-VLC-HI03,C,hipermercado,Hipermercado / Gourmet,Paterna,3331,1998,3916.91,13047217.67
+RN-VLC-HI04,C,hipermercado,Hipermercado / Gourmet,Torrent,2809,2018,3916.91,11002592.14
+RN-VLC-HI05,C,hipermercado,Hipermercado / Gourmet,Gandía,3175,2007,3916.91,12436180.15
+RN-VLC-HI06,C,hipermercado,Hipermercado / Gourmet,Sagunto,2963,1987,3916.91,11605795.84
+RN-VLC-HI07,C,hipermercado,Hipermercado / Gourmet,Alzira,2381,1981,3916.91,9326155.89
+RN-VLC-ES01,C,especializada,Tienda especializada,Xàtiva,868,1979,4598.11,3991160.35
+RN-VLC-ES02,C,especializada,Tienda especializada,Burjassot,649,1980,4598.11,2984174.04
+RN-VLC-ES03,C,especializada,Tienda especializada,Mislata,736,2013,4598.11,3384209.69
+RN-VLC-ES04,C,especializada,Tienda especializada,Alboraya,799,2022,4598.11,3673890.69
+RN-VLC-ES05,C,especializada,Tienda especializada,Manises,792,1981,4598.11,3641703.91
+RN-VLC-ES06,C,especializada,Tienda especializada,Catarroja,630,1986,4598.11,2896809.93
+RN-VLC-ES07,C,especializada,Tienda especializada,Colón 2,750,2016,4598.11,3448583.25
+RN-VLC-ES08,C,especializada,Tienda especializada,Ruzafa 2,894,2015,4598.11,4110711.23
+RN-VLC-ES09,C,especializada,Tienda especializada,Campanar 2,774,1985,4598.11,3558937.91
+RN-VLC-ES10,C,especializada,Tienda especializada,Paterna 2,695,2017,4598.11,3195687.14
+RN-VLC-CV01,C,conveniencia,Conveniencia,Torrent 2,402,1988,5449.62,2190747.58
+RN-VLC-CV02,C,conveniencia,Conveniencia,Gandía 2,420,2001,5449.62,2288840.76
+RN-VLC-CV03,C,conveniencia,Conveniencia,Sagunto 2,458,1994,5449.62,2495926.35
+RN-VLC-CV04,C,conveniencia,Conveniencia,Alzira 2,380,1992,5449.62,2070855.92
+RN-VLC-CV05,C,conveniencia,Conveniencia,Xàtiva 2,323,1983,5449.62,1760227.53
+RN-VLC-CV06,C,conveniencia,Conveniencia,Burjassot 2,465,1989,5449.62,2534073.69
+RN-VLC-CV07,C,conveniencia,Conveniencia,Mislata 2,386,1989,5449.62,2103553.65
+RN-VLC-CV08,C,conveniencia,Conveniencia,Alboraya 2,335,2016,5449.62,1825622.98
+RN-VLC-CV09,C,conveniencia,Conveniencia,Manises 2,351,1996,5449.62,1912816.92
+RN-SEV-GA01,D,gran_almacen,Gran almacén,Nervión,12690,1980,2630.15,33376548.45
+RN-SEV-HI01,D,hipermercado,Hipermercado / Gourmet,Triana,2562,1998,3183.87,8157070.49
+RN-SEV-HI02,D,hipermercado,Hipermercado / Gourmet,Los Remedios,2843,1995,3183.87,9051737.47
+RN-SEV-HI03,D,hipermercado,Hipermercado / Gourmet,Dos Hermanas,2493,2014,3183.87,7937383.58
+RN-SEV-HI04,D,hipermercado,Hipermercado / Gourmet,Alcalá de Guadaíra,3300,1983,3183.87,10506765.26
+RN-SEV-ES01,D,especializada,Tienda especializada,Utrera,989,2001,3737.58,3696467.69
+RN-SEV-ES02,D,especializada,Tienda especializada,Écija,882,2009,3737.58,3296546.51
+RN-SEV-ES03,D,especializada,Tienda especializada,Carmona,933,2014,3737.58,3487163.15
+RN-SEV-ES04,D,especializada,Tienda especializada,Mairena,769,1988,3737.58,2874199.85
+RN-SEV-ES05,D,especializada,Tienda especializada,Bormujos,738,2012,3737.58,2758334.84
+RN-SEV-ES06,D,especializada,Tienda especializada,Coria,997,2014,3737.58,3726368.33
+RN-SEV-ES07,D,especializada,Tienda especializada,Lebrija,1024,2016,3737.58,3827283.02
+RN-SEV-ES08,D,especializada,Tienda especializada,Osuna,958,2012,3737.58,3580602.67
+RN-SEV-ES09,D,especializada,Tienda especializada,Marchena,895,2019,3737.58,3345135.07
+RN-SEV-ES10,D,especializada,Tienda especializada,Nervión 2,910,1979,3737.58,3401198.78
+RN-SEV-ES11,D,especializada,Tienda especializada,Triana 2,896,1994,3737.58,3348872.65
+RN-SEV-ES12,D,especializada,Tienda especializada,Los Remedios 2,822,2006,3737.58,3072291.65
+RN-SEV-CV01,D,conveniencia,Conveniencia,Dos Hermanas 2,444,1999,4429.72,1966796.61
+RN-SEV-CV02,D,conveniencia,Conveniencia,Alcalá de Guadaíra 2,523,1982,4429.72,2316744.66
+RN-SEV-CV03,D,conveniencia,Conveniencia,Utrera 2,424,1992,4429.72,1878202.17
+RN-SEV-CV04,D,conveniencia,Conveniencia,Écija 2,410,1999,4429.72,1816186.06
+RN-SEV-CV05,D,conveniencia,Conveniencia,Carmona 2,389,1991,4429.72,1723161.9
+RN-SEV-CV06,D,conveniencia,Conveniencia,Mairena 2,444,1997,4429.72,1966796.61
+RN-SEV-CV07,D,conveniencia,Conveniencia,Bormujos 2,432,1998,4429.72,1913639.95
+RN-SEV-CV08,D,conveniencia,Conveniencia,Coria 2,487,1991,4429.72,2157274.66
+RN-SEV-CV09,D,conveniencia,Conveniencia,Lebrija 2,471,1994,4429.72,2086399.11
+RN-SEV-CV10,D,conveniencia,Conveniencia,Osuna 2,472,2008,4429.72,2090828.83
+RN-BIO-GA01,E,gran_almacen,Gran almacén,Gran Vía,13295,1979,3714.32,49381901.49
+RN-BIO-HI01,E,hipermercado,Hipermercado / Gourmet,Abando,3059,1991,4496.29,13754157.28
+RN-BIO-HI02,E,hipermercado,Hipermercado / Gourmet,Deusto,2315,2015,4496.29,10408916.02
+RN-BIO-ES01,E,especializada,Tienda especializada,Getxo,770,2019,5278.25,4064254.68
+RN-BIO-ES02,E,especializada,Tienda especializada,Barakaldo,698,2021,5278.25,3684220.47
+RN-BIO-ES03,E,especializada,Tienda especializada,Portugalete,1058,1981,5278.25,5584391.49
+RN-BIO-ES04,E,especializada,Tienda especializada,Basauri,901,2021,5278.25,4755705.8
+RN-BIO-ES05,E,especializada,Tienda especializada,Galdakao,861,1980,5278.25,4544575.68
+RN-BIO-ES06,E,especializada,Tienda especializada,Durango,1027,1987,5278.25,5420765.65
+RN-BIO-ES07,E,especializada,Tienda especializada,Mungia,863,2012,5278.25,4555132.19
+RN-BIO-CV01,E,conveniencia,Conveniencia,Gran Vía 2,435,2019,6255.71,2721232.25
+RN-BIO-CV02,E,conveniencia,Conveniencia,Abando 2,419,2007,6255.71,2621140.95
+RN-BIO-CV03,E,conveniencia,Conveniencia,Deusto 2,397,2006,6255.71,2483515.41
+RN-BIO-CV04,E,conveniencia,Conveniencia,Getxo 2,454,2020,6255.71,2840090.67

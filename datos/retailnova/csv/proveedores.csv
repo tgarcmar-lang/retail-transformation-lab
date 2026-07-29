@@ -1,0 +1,121 @@
+codigo_proveedor,pais_origen,categoria,nombre_categoria,plazo_entrega_dias,fiabilidad_entrega,pedido_minimo_eur
+PRV-001,Turquía,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",16,0.845,500
+PRV-002,Portugal,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",7,0.972,5000
+PRV-003,España,alimentacion_hosteleria,Alimentación y Hostelería,5,0.914,500
+PRV-004,China,moda_belleza,Moda y Belleza,48,0.846,2500
+PRV-005,España,moda_belleza,Moda y Belleza,6,0.903,500
+PRV-006,España,alimentacion_hosteleria,Alimentación y Hostelería,7,0.995,500
+PRV-007,España,moda_belleza,Moda y Belleza,9,0.946,10000
+PRV-008,Portugal,alimentacion_hosteleria,Alimentación y Hostelería,10,0.95,5000
+PRV-009,Portugal,moda_belleza,Moda y Belleza,10,0.949,5000
+PRV-010,Italia,alimentacion_hosteleria,Alimentación y Hostelería,9,0.906,500
+PRV-011,Turquía,alimentacion_hosteleria,Alimentación y Hostelería,22,0.971,500
+PRV-012,China,moda_belleza,Moda y Belleza,65,0.783,5000
+PRV-013,Vietnam,moda_belleza,Moda y Belleza,50,0.777,1000
+PRV-014,Italia,moda_belleza,Moda y Belleza,8,0.995,5000
+PRV-015,España,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",6,0.901,500
+PRV-016,Italia,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",17,0.908,500
+PRV-017,España,moda_belleza,Moda y Belleza,9,0.995,10000
+PRV-018,China,moda_belleza,Moda y Belleza,39,0.851,500
+PRV-019,Bangladés,alimentacion_hosteleria,Alimentación y Hostelería,37,0.692,2500
+PRV-020,España,moda_belleza,Moda y Belleza,7,0.995,500
+PRV-021,España,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",7,0.973,2500
+PRV-022,China,alimentacion_hosteleria,Alimentación y Hostelería,48,0.735,1000
+PRV-023,Portugal,moda_belleza,Moda y Belleza,9,0.876,5000
+PRV-024,Vietnam,moda_belleza,Moda y Belleza,70,0.831,10000
+PRV-025,España,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",6,0.984,1000
+PRV-026,Italia,moda_belleza,Moda y Belleza,10,0.938,5000
+PRV-027,Bangladés,moda_belleza,Moda y Belleza,33,0.782,500
+PRV-028,China,moda_belleza,Moda y Belleza,51,0.689,10000
+PRV-029,España,alimentacion_hosteleria,Alimentación y Hostelería,5,0.926,5000
+PRV-030,China,moda_belleza,Moda y Belleza,50,0.82,2500
+PRV-031,España,moda_belleza,Moda y Belleza,6,0.995,10000
+PRV-032,Bangladés,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",67,0.831,1000
+PRV-033,España,alimentacion_hosteleria,Alimentación y Hostelería,5,0.995,5000
+PRV-034,España,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",6,0.995,2500
+PRV-035,España,moda_belleza,Moda y Belleza,7,0.995,500
+PRV-036,Italia,moda_belleza,Moda y Belleza,12,0.969,2500
+PRV-037,China,moda_belleza,Moda y Belleza,57,0.786,2500
+PRV-038,China,moda_belleza,Moda y Belleza,37,0.899,10000
+PRV-039,Vietnam,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",51,0.799,1000
+PRV-040,España,moda_belleza,Moda y Belleza,6,0.935,500
+PRV-041,España,moda_belleza,Moda y Belleza,6,0.914,1000
+PRV-042,Italia,moda_belleza,Moda y Belleza,9,0.963,2500
+PRV-043,China,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",46,0.716,10000
+PRV-044,Vietnam,alimentacion_hosteleria,Alimentación y Hostelería,48,0.722,10000
+PRV-045,España,moda_belleza,Moda y Belleza,6,0.995,10000
+PRV-046,Italia,moda_belleza,Moda y Belleza,16,0.931,1000
+PRV-047,China,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",53,0.767,10000
+PRV-048,Portugal,moda_belleza,Moda y Belleza,10,0.962,1000
+PRV-049,China,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",48,0.785,10000
+PRV-050,Bangladés,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",63,0.655,5000
+PRV-051,China,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",49,0.818,1000
+PRV-052,Turquía,moda_belleza,Moda y Belleza,21,0.888,10000
+PRV-053,España,alimentacion_hosteleria,Alimentación y Hostelería,7,0.914,1000
+PRV-054,España,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",6,0.958,1000
+PRV-055,Vietnam,alimentacion_hosteleria,Alimentación y Hostelería,45,0.823,2500
+PRV-056,China,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",63,0.781,1000
+PRV-057,Turquía,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",13,0.793,5000
+PRV-058,Portugal,alimentacion_hosteleria,Alimentación y Hostelería,7,0.991,1000
+PRV-059,China,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",47,0.804,1000
+PRV-060,Portugal,moda_belleza,Moda y Belleza,7,0.932,5000
+PRV-061,España,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",7,0.977,2500
+PRV-062,España,alimentacion_hosteleria,Alimentación y Hostelería,7,0.956,10000
+PRV-063,España,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",7,0.911,10000
+PRV-064,España,moda_belleza,Moda y Belleza,7,0.886,2500
+PRV-065,España,alimentacion_hosteleria,Alimentación y Hostelería,5,0.897,2500
+PRV-066,China,alimentacion_hosteleria,Alimentación y Hostelería,58,0.762,1000
+PRV-067,España,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",7,0.995,5000
+PRV-068,España,moda_belleza,Moda y Belleza,3,0.954,1000
+PRV-069,España,moda_belleza,Moda y Belleza,7,0.879,5000
+PRV-070,Vietnam,alimentacion_hosteleria,Alimentación y Hostelería,58,0.726,500
+PRV-071,Italia,moda_belleza,Moda y Belleza,10,0.991,2500
+PRV-072,España,moda_belleza,Moda y Belleza,7,0.899,2500
+PRV-073,Italia,moda_belleza,Moda y Belleza,11,0.963,5000
+PRV-074,España,moda_belleza,Moda y Belleza,5,0.91,2500
+PRV-075,España,moda_belleza,Moda y Belleza,7,0.949,500
+PRV-076,Turquía,moda_belleza,Moda y Belleza,25,0.887,5000
+PRV-077,Bangladés,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",63,0.702,1000
+PRV-078,España,alimentacion_hosteleria,Alimentación y Hostelería,5,0.971,2500
+PRV-079,España,moda_belleza,Moda y Belleza,7,0.942,1000
+PRV-080,España,alimentacion_hosteleria,Alimentación y Hostelería,7,0.805,10000
+PRV-081,Italia,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",10,0.886,500
+PRV-082,China,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",77,0.754,10000
+PRV-083,España,moda_belleza,Moda y Belleza,7,0.995,2500
+PRV-084,España,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",6,0.985,10000
+PRV-085,Portugal,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",10,0.899,5000
+PRV-086,Vietnam,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",43,0.797,500
+PRV-087,España,alimentacion_hosteleria,Alimentación y Hostelería,7,0.831,5000
+PRV-088,Bangladés,moda_belleza,Moda y Belleza,40,0.735,5000
+PRV-089,España,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",4,0.913,1000
+PRV-090,España,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",8,0.955,500
+PRV-091,España,moda_belleza,Moda y Belleza,6,0.995,10000
+PRV-092,España,moda_belleza,Moda y Belleza,4,0.995,500
+PRV-093,Portugal,moda_belleza,Moda y Belleza,11,0.995,500
+PRV-094,China,moda_belleza,Moda y Belleza,61,0.771,2500
+PRV-095,España,moda_belleza,Moda y Belleza,7,0.94,5000
+PRV-096,España,alimentacion_hosteleria,Alimentación y Hostelería,6,0.995,5000
+PRV-097,Turquía,moda_belleza,Moda y Belleza,21,0.916,1000
+PRV-098,Vietnam,alimentacion_hosteleria,Alimentación y Hostelería,44,0.762,500
+PRV-099,España,moda_belleza,Moda y Belleza,7,0.935,2500
+PRV-100,China,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",49,0.807,10000
+PRV-101,Italia,alimentacion_hosteleria,Alimentación y Hostelería,13,0.881,10000
+PRV-102,Bangladés,alimentacion_hosteleria,Alimentación y Hostelería,41,0.727,2500
+PRV-103,España,moda_belleza,Moda y Belleza,6,0.936,5000
+PRV-104,España,moda_belleza,Moda y Belleza,6,0.938,2500
+PRV-105,España,alimentacion_hosteleria,Alimentación y Hostelería,5,0.986,500
+PRV-106,España,alimentacion_hosteleria,Alimentación y Hostelería,4,0.906,1000
+PRV-107,Bangladés,moda_belleza,Moda y Belleza,53,0.67,5000
+PRV-108,China,moda_belleza,Moda y Belleza,44,0.732,2500
+PRV-109,España,moda_belleza,Moda y Belleza,4,0.955,5000
+PRV-110,España,moda_belleza,Moda y Belleza,7,0.918,2500
+PRV-111,Turquía,alimentacion_hosteleria,Alimentación y Hostelería,21,0.959,2500
+PRV-112,España,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",7,0.995,10000
+PRV-113,España,moda_belleza,Moda y Belleza,6,0.915,5000
+PRV-114,España,moda_belleza,Moda y Belleza,6,0.888,5000
+PRV-115,Portugal,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",7,0.941,2500
+PRV-116,España,hogar_electronica,"Hogar, Electrónica y Electrodomésticos",5,0.995,2500
+PRV-117,España,moda_belleza,Moda y Belleza,7,0.995,5000
+PRV-118,España,alimentacion_hosteleria,Alimentación y Hostelería,5,0.995,5000
+PRV-119,Vietnam,alimentacion_hosteleria,Alimentación y Hostelería,34,0.66,10000
+PRV-120,China,moda_belleza,Moda y Belleza,44,0.86,1000

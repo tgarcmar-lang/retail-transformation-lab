@@ -69,7 +69,7 @@ La inflación de alcance es el principal riesgo de este proyecto.
 
 ## Estado actual
 
-**Semana 1 (29 jul 2026).** Plataforma desplegada y funcionando.
+**Semana 1 (29 jul 2026).** Plataforma desplegada y datos del caso generados.
 
 **URL de producción:** https://retailnova-lab.streamlit.app/
 **Repositorio:** https://github.com/tgarcmar-lang/retail-transformation-lab
@@ -79,10 +79,34 @@ La inflación de alcance es el principal riesgo de este proyecto.
 - [x] Landing page con selector de filial
 - [x] `requirements.txt`, `.gitignore`, configuración de Streamlit
 - [x] Repositorio en GitHub y despliegue automático en Streamlit Cloud
+- [x] Generador de datos de las 5 filiales (`datos/retailnova/`), validado
+      con Tomás y cubierto por 98 pruebas
 
 ### Siguiente
-- [ ] Generador de las 5 filiales de RetailNova — **la tarea crítica**
-- [ ] Sesión 1: Diagnóstico
+- [ ] Sesión 1: Diagnóstico — **la tarea crítica ahora**
+- [ ] Panel del profesor
+
+## El caso: RetailNova Europa
+
+Operador de **grandes almacenes polivalentes**, no una cadena de supermercados.
+El núcleo del negocio es el textil y los bienes duraderos.
+
+- Moda y Belleza 40 % · Hogar y Electrónica 36 % · Alimentación 24 %
+- 134 puntos de venta en cuatro formatos: 8 grandes almacenes, 22 hipermercados,
+  63 tiendas especializadas y 41 de conveniencia
+- 1.149 M€ de ventas, 5.539 empleados, 451 vehículos, 9 centros logísticos
+- 35.130 t CO₂e al año (50 % electricidad, 26 % gasóleo, 20 % refrigerantes)
+
+Cada filial tiene un problema dominante que su grupo debe descubrir en los datos:
+Madrid la última milla urbana, Barcelona los plazos de la cadena asiática,
+Valencia la energía y el R-404A, Sevilla los kilómetros en vacío, Bilbao la falta
+de escala. Ver `datos/retailnova/README.md`.
+
+**Regla dura de los datos:** las cifras del caso viven en
+`datos/retailnova/parametros.py` y en ningún otro sitio. Los CSV se regeneran,
+nunca se editan a mano. La cuota de comercio electrónico se deriva del mix de
+categorías: no se fija a mano, porque así es imposible que salga un número
+inverosímil.
 
 ## Notas de despliegue (aprendidas a golpes)
 
@@ -101,3 +125,13 @@ La inflación de alcance es el principal riesgo de este proyecto.
 - **2026-07-29** — Descartado SQLite-en-GitHub para persistencia: no funciona en
   Streamlit Cloud por sistema de ficheros efímero.
 - **2026-07-29** — Persistencia aplazada: la Sesión 1 no la necesita.
+- **2026-07-29** — RetailNova definida como operador de grandes almacenes, no
+  como cadena de alimentación. Corrección de Tomás. Obligó a rehacer el parque
+  de tiendas (cuatro formatos en vez de uno) y a multiplicar por cinco la
+  energía por edificio.
+- **2026-07-29** — Comercio electrónico derivado del mix de categorías en lugar
+  de fijado a mano. El 38 % inicial de Madrid era inverosímil: la alimentación
+  online en España está en el 3-5 %. Madrid queda en el 25 %.
+- **2026-07-29** — Datos: 24 meses (2024-2025), granularidad diaria por tienda,
+  incluyendo ya las variables ambientales de la Sesión 2. Regenerar en octubre
+  habría cambiado números que los alumnos ya habrían usado en septiembre.

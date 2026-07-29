@@ -1,0 +1,7 @@
+concepto,unidad,factor,alcance
+Gasóleo,kg CO2e/litro,2.68,1
+Gas natural,kg CO2e/kWh,0.182,1
+R-404A,kg CO2e/kg,3922.0,1
+R-449A,kg CO2e/kg,1397.0,1
+R-744,kg CO2e/kg,1.0,1
+Electricidad (mix español),kg CO2e/kWh,0.17,2
