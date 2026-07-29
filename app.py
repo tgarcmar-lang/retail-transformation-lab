@@ -5,7 +5,7 @@ Escuela Politécnica · Universidad Camilo José Cela
 
 import streamlit as st
 
-from core import filiales, sesiones
+from core import datos, filiales, kpis, marca, sesiones
 from modulos import sesion1_diagnostico
 
 st.set_page_config(
@@ -17,13 +17,6 @@ st.set_page_config(
 
 ESTILOS = """
 <style>
-    .bloque-titulo {
-        border-left: 4px solid #0F766E;
-        padding-left: 1rem;
-        margin-bottom: 1.5rem;
-    }
-    .bloque-titulo h1 { margin-bottom: 0.2rem; font-size: 2.1rem; }
-    .bloque-titulo p  { color: #64748B; margin: 0; }
     .tarjeta {
         background: #F8FAFC;
         border: 1px solid #E2E8F0;
@@ -44,11 +37,32 @@ ESTILOS = """
         border-radius: 999px;
         margin-bottom: 0.6rem;
     }
-    .abierta   { background: #CCFBF1; color: #0F766E; }
+    .abierta   { background: #F7E8EE; color: #872046; }
     .bloqueada { background: #E2E8F0; color: #64748B; }
 </style>
 """
 st.markdown(ESTILOS, unsafe_allow_html=True)
+
+
+@st.cache_data(show_spinner=False)
+def cifras_de_portada() -> list[tuple[str, str]]:
+    """Las cifras del grupo, leídas de los datos y cacheadas.
+
+    Si los datos no estuvieran donde deben, la portada se dibuja sin cifras
+    en lugar de romperse: el alumno vería una pantalla en blanco y no
+    entendería por qué.
+    """
+    try:
+        r = kpis.resumen_corporativo()
+    except Exception:
+        return []
+    return [
+        (f'{r["ventas_eur"] / 1e6:,.0f} M€'.replace(",", "."), "Ventas anuales"),
+        (f'{r["puntos_de_venta"]}', "Puntos de venta"),
+        (f'{r["vehiculos"]}', "Vehículos"),
+        (f'{r["co2e_t"]:,.0f} t'.replace(",", "."), "CO₂e al año"),
+        (f'{r["filiales"]}', "Filiales"),
+    ]
 
 
 # ── Barra lateral ────────────────────────────────────────────────────────────
@@ -90,15 +104,14 @@ with st.sidebar:
 
 # ── Contenido principal ──────────────────────────────────────────────────────
 
-st.markdown(
-    """
-    <div class="bloque-titulo">
-        <h1>Retail Transformation Lab</h1>
-        <p>Dirige la transformación sostenible de RetailNova Europa</p>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
+if st.session_state.get("vista") == "sesion1" and grupo:
+    filial_actual = filiales.obtener(grupo)
+    st.markdown(
+        marca.cabecera_compacta(f"{filial_actual.nombre} · Grupo {grupo}"),
+        unsafe_allow_html=True,
+    )
+else:
+    st.markdown(marca.cabecera(cifras_de_portada()), unsafe_allow_html=True)
 
 if not grupo:
     st.info(
@@ -116,7 +129,6 @@ filial = filiales.obtener(grupo)
 # ── Sesión 1 ─────────────────────────────────────────────────────────────────
 
 if st.session_state.get("vista") == "sesion1":
-    st.caption(f"{filial.nombre} · Grupo {grupo}")
     sesion1_diagnostico.mostrar(grupo)
     st.stop()
 

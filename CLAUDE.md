@@ -57,6 +57,18 @@ La inflación de alcance es el principal riesgo de este proyecto.
 - **Cuota de IA limitada.** Cachear respuestas. Si se agota, mostrar análisis
   precalculado, nunca un error. La clase no se para jamás por un fallo de cuota.
 
+## Identidad visual
+
+Granate corporativo UCJC: **`#872046`**. Vive en `core/marca.py`, que devuelve
+HTML sin importar Streamlit. La portada lleva cabecera institucional (logotipo,
+escuela, nombre y cargo), el rótulo *AI Sustainability & Logistics Projects*,
+el esquema de las cinco filiales y las cifras del caso, que se leen de los
+datos y no están escritas a mano.
+
+El logotipo se incrusta en base64 porque Streamlit no sirve ficheros locales
+dentro de un bloque de HTML. Hay **dos tamaños a propósito**: dentro de una
+sesión se reenvía el HTML en cada clic, así que allí va el pequeño.
+
 ## Convenciones
 
 - Todo el texto de la interfaz **en español**, incluidos mensajes de error.

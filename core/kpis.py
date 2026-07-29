@@ -456,6 +456,24 @@ def puntos_debiles(grupo: str, anio: int | None = None, cuantos: int = 3) -> pd.
             .head(cuantos).reset_index(drop=True))
 
 
+def resumen_corporativo(anio: int | None = None) -> dict:
+    """Las cifras del grupo entero, para la portada.
+
+    Se calculan sobre los datos, no se escriben a mano: si el caso cambia,
+    la portada cambia con él y no se queda mintiendo.
+    """
+    anio = anio or datos.ultimo_anio()
+    grupos = [f.grupo for f in filiales.listar()]
+    return {
+        "ventas_eur": sum(ventas_totales(g, anio) for g in grupos),
+        "puntos_de_venta": len(datos.cargar("tiendas")),
+        "vehiculos": len(datos.cargar("flota")),
+        "centros_logisticos": len(datos.cargar("centros")),
+        "filiales": len(grupos),
+        "co2e_t": sum(huella_total(g, anio) for g in grupos),
+    }
+
+
 def calidad_de_los_datos(grupo: str, anio: int | None = None) -> dict:
     """Qué le falta a los datos de esta filial.
 
