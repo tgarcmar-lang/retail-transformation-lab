@@ -364,12 +364,89 @@ FACTORES_EMISION = [
     ("R-449A", "kg CO2e/kg", 1397.0, 1),
     ("R-744", "kg CO2e/kg", 1.0, 1),
     ("Electricidad (mix español)", "kg CO2e/kWh", 0.17, 2),
+    # Alcance 3. Los tres primeros son factores de gasto: cuánto emite, de
+    # media, un euro comprado en esa categoría. Es una estimación gruesa,
+    # y decirlo forma parte de la lección.
+    ("Compras · Moda y belleza", "kg CO2e/€", 0.62, 3),
+    ("Compras · Hogar y electrónica", "kg CO2e/€", 0.48, 3),
+    ("Compras · Alimentación y hostelería", "kg CO2e/€", 0.88, 3),
+    ("Transporte por carretera", "kg CO2e/t·km", 0.105, 3),
+    ("Transporte marítimo", "kg CO2e/t·km", 0.016, 3),
+    ("Transporte aéreo", "kg CO2e/t·km", 0.602, 3),
+    ("Residuo a vertedero", "kg CO2e/kg", 0.45, 3),
+    ("Residuo reciclado", "kg CO2e/kg", 0.021, 3),
 ]
 
 FACTOR_GASOLEO = 2.68
 FACTOR_GAS_NATURAL = 0.182
 FACTOR_ELECTRICIDAD = 0.17
 GWP = {"R-404A": 3922.0, "R-449A": 1397.0, "R-744": 1.0}
+
+# --------------------------------------------------------------------------
+# Alcance 3
+# --------------------------------------------------------------------------
+# El inventario de alcances 1 y 2 de RetailNova ronda las 35.000 t. El de
+# alcance 3 es un orden de magnitud mayor, y eso no es un defecto del caso:
+# es lo que le pasa a cualquier minorista. Un distribuidor casi no fabrica
+# nada, así que casi todo lo que emite lo emite otro por encargo suyo.
+#
+# El método es **estimación por gasto**: se multiplica lo comprado por un
+# factor medio de la categoría. Es el método que usan las empresas cuando
+# empiezan, y tiene un defecto que conviene que el alumno vea: si negocias
+# un descuento con el proveedor, tu huella baja sin que cambie nada físico.
+
+#: Emisiones por euro comprado, según lo que se compra.
+FACTOR_GASTO_CATEGORIA = {
+    "moda_belleza": 0.62,
+    "hogar_electronica": 0.48,
+    "alimentacion_hosteleria": 0.88,
+}
+
+#: Multiplicador por país de fabricación. Recoge lo intensivo que es el mix
+#: eléctrico del país y su proceso industrial. Comprar en Asia no solo tarda
+#: más y sale más barato: también emite más por euro fabricado. Es la pieza
+#: que convierte el dilema de Barcelona en un problema de carbono y no solo
+#: de margen y plazo.
+INTENSIDAD_ORIGEN = {
+    "España": 1.00, "Portugal": 0.98, "Italia": 0.96, "Turquía": 1.18,
+    "China": 1.45, "Bangladés": 1.38, "Vietnam": 1.34,
+}
+
+#: Distancia media desde el origen hasta el centro logístico, en kilómetros.
+DISTANCIA_ORIGEN_KM = {
+    "España": 450, "Portugal": 900, "Italia": 1_800, "Turquía": 3_400,
+    "China": 19_000, "Bangladés": 16_500, "Vietnam": 18_000,
+}
+
+#: Cómo viaja hoy la mercancía de cada origen. El porcentaje aéreo es
+#: pequeño en volumen y enorme en emisiones: volar una tonelada emite unas
+#: cuarenta veces más que llevarla en barco.
+MIX_MODAL = {
+    "España": {"carretera": 1.00},
+    "Portugal": {"carretera": 1.00},
+    "Italia": {"carretera": 0.85, "maritimo": 0.15},
+    "Turquía": {"carretera": 0.55, "maritimo": 0.45},
+    "China": {"maritimo": 0.88, "aereo": 0.12},
+    "Bangladés": {"maritimo": 0.85, "aereo": 0.15},
+    "Vietnam": {"maritimo": 0.86, "aereo": 0.14},
+}
+
+#: Emisiones por tonelada transportada y kilómetro recorrido.
+FACTOR_MODO = {"carretera": 0.105, "maritimo": 0.016, "aereo": 0.602}
+
+#: Densidad de valor: cuántos euros de compra pesan una tonelada. Hace falta
+#: porque las compras están en euros y el transporte se mide en toneladas.
+#: Un contenedor de camisetas vale mucho y pesa poco; uno de conservas, al
+#: revés.
+VALOR_POR_TONELADA = {
+    "moda_belleza": 14_000.0,
+    "hogar_electronica": 9_000.0,
+    "alimentacion_hosteleria": 2_400.0,
+}
+
+#: Tratamiento de residuos.
+FACTOR_RESIDUO_VERTEDERO = 0.45
+FACTOR_RESIDUO_RECICLADO = 0.021
 
 # --------------------------------------------------------------------------
 # Imperfecciones deliberadas

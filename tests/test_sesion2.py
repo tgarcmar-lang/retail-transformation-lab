@@ -13,7 +13,8 @@ GRUPOS = ["A", "B", "C", "D", "E"]
 ESPERA = 120
 
 
-def _entrar(grupo: str, paso: int = 0, plan_inicial: dict | None = None) -> AppTest:
+def _entrar(grupo: str, paso: int = 0, plan_inicial: dict | None = None,
+            plan3_inicial: dict | None = None) -> AppTest:
     prueba = AppTest.from_file(APP, default_timeout=ESPERA)
     prueba.run()
     filial = filiales.obtener(grupo)
@@ -22,6 +23,8 @@ def _entrar(grupo: str, paso: int = 0, plan_inicial: dict | None = None) -> AppT
     prueba.session_state["paso2"] = paso
     if plan_inicial is not None:
         prueba.session_state["plan"] = plan_inicial
+    if plan3_inicial is not None:
+        prueba.session_state["plan3"] = plan3_inicial
     prueba.run()
     return prueba
 
@@ -31,7 +34,7 @@ def _entrar(grupo: str, paso: int = 0, plan_inicial: dict | None = None) -> AppT
 # --------------------------------------------------------------------------
 
 @pytest.mark.parametrize("grupo", GRUPOS)
-@pytest.mark.parametrize("paso", [0, 1, 2])
+@pytest.mark.parametrize("paso", [0, 1, 2, 3])
 def test_cada_paso_carga_sin_errores(grupo, paso):
     prueba = _entrar(grupo, paso)
     assert not prueba.exception, f"Paso {paso + 1} roto en el grupo {grupo}"
@@ -184,7 +187,7 @@ def test_el_plan_es_html_bien_formado():
                 self.desajustes.append(etiqueta)
 
     comprobador = Comprobador()
-    comprobador.feed(plan.generar("D", palancas.simular("D", {"rutas": 5}), {}))
+    comprobador.feed(plan.generar("D", palancas.simular("D", {"vacio": 5}), {}))
     assert not comprobador.pila
     assert not comprobador.desajustes
 
@@ -198,14 +201,119 @@ def test_el_nombre_del_fichero_identifica_al_grupo(grupo):
 
 
 # --------------------------------------------------------------------------
+# La capa conceptual
+# --------------------------------------------------------------------------
+
+@pytest.mark.parametrize("grupo", GRUPOS)
+def test_el_primer_paso_explica_que_es_una_huella(grupo):
+    """Sin esto el alumno mueve toneladas sin saber qué está moviendo."""
+    prueba = _entrar(grupo, 0)
+    texto = " ".join(m.value for m in prueba.markdown)
+    assert "toneladas de CO₂ equivalente" in texto.lower() or \
+           "CO₂ equivalente" in texto
+
+
+@pytest.mark.parametrize("grupo", GRUPOS)
+def test_el_primer_paso_explica_los_tres_alcances(grupo):
+    prueba = _entrar(grupo, 0)
+    texto = " ".join(m.value for m in prueba.markdown)
+    for alcance in ("Alcance 1", "Alcance 2", "Alcance 3"):
+        assert alcance in texto, alcance
+
+
+def test_el_primer_paso_dice_donde_esta_la_frontera():
+    """Que un inventario tenga frontera no es trampa; no decirlo, sí."""
+    prueba = _entrar("A", 0)
+    texto = " ".join(i.value for i in prueba.info)
+    assert "frontera" in texto.lower()
+    assert "alcances 1 y 2" in texto.lower()
+
+
+def test_el_primer_paso_no_destripa_el_tamano_del_alcance3():
+    """El susto es del paso 4. Adelantarlo lo desactiva."""
+    prueba = _entrar("A", 0)
+    texto = " ".join(m.value for m in prueba.markdown)
+    assert "veces" not in texto.lower().split("alcance 3")[-1][:200]
+
+
+# --------------------------------------------------------------------------
+# El paso 4 · alcance 3
+# --------------------------------------------------------------------------
+
+@pytest.mark.parametrize("grupo", GRUPOS)
+def test_el_cuarto_paso_ensena_la_huella_entera(grupo):
+    prueba = _entrar(grupo, 3)
+    assert not prueba.exception
+    etiquetas = [m.label for m in prueba.metric]
+    assert "Lo que llevabais mirando" in etiquetas
+    assert "Vuestro alcance 3" in etiquetas
+    assert "Vuestra huella real" in etiquetas
+
+
+@pytest.mark.parametrize("grupo", GRUPOS)
+def test_el_cuarto_paso_avisa_de_lo_que_cubria_el_plan(grupo):
+    prueba = _entrar(grupo, 3)
+    assert any("hecho sobre una parte" in e.value for e in prueba.error)
+
+
+@pytest.mark.parametrize("grupo", GRUPOS)
+def test_el_cuarto_paso_ofrece_sus_propios_controles(grupo):
+    prueba = _entrar(grupo, 3)
+    assert prueba.slider, f"El grupo {grupo} no tiene palancas de alcance 3"
+
+
+@pytest.mark.parametrize("grupo", GRUPOS)
+def test_con_el_mejor_plan_de_alcance3_se_cumple_su_objetivo(grupo):
+    from core import alcance3
+    mejor = alcance3.mejor_plan_posible3(grupo)["plan"]
+    prueba = _entrar(grupo, 3, plan3_inicial=mejor)
+    assert not prueba.exception
+    assert any("alcance 3 cumplido" in s.value for s in prueba.success)
+
+
+def test_gastarlo_todo_en_acercar_la_cadena_se_avisa():
+    """La trampa del paso 4: relocalizar suena bien y arruina el presupuesto."""
+    from core import alcance3
+    prueba = _entrar("B", 3, plan3_inicial={"origen": alcance3.RELOCALIZACION_MAXIMA})
+    assert any("pasado" in e.value.lower() for e in prueba.error)
+
+
+def test_el_cuarto_paso_admite_no_haber_hecho_el_plan_operativo():
+    """Un grupo puede saltar al paso 4 sin pasar por el 3: no puede romperse."""
+    prueba = _entrar("A", 3)
+    assert not prueba.exception
+
+
+@pytest.mark.parametrize("grupo", GRUPOS)
+def test_el_plan_descargado_incluye_el_alcance3(grupo):
+    from core import alcance3
+    resultado = palancas.simular(grupo, palancas.mejor_plan_posible(grupo)["plan"])
+    resultado3 = alcance3.mejor_plan_posible3(grupo)
+    documento = plan.generar(grupo, resultado, {}, "Equipo", resultado3)
+    assert "La huella entera" in documento
+    assert "El plan de alcance 3" in documento
+
+
+def test_el_plan_no_suma_las_dos_reducciones_en_un_solo_numero():
+    """Sumarlas sería justo el error que la sesión intenta desmontar."""
+    from core import alcance3
+    resultado = palancas.simular("B", palancas.mejor_plan_posible("B")["plan"])
+    resultado3 = alcance3.mejor_plan_posible3("B")
+    documento = plan.generar("B", resultado, {}, "", resultado3)
+    assert "no se suman en un solo porcentaje" in documento
+
+
+# --------------------------------------------------------------------------
 # Convivencia con la Sesión 1
 # --------------------------------------------------------------------------
 
 def test_cambiar_de_grupo_descarta_tambien_el_plan():
     """Un plan hecho para Sevilla no vale para Madrid: se empieza de cero."""
-    prueba = _entrar("D", 2, plan_inicial={"rutas": 10.0})
+    prueba = _entrar("D", 2, plan_inicial={"vacio": 10.0},
+                     plan3_inicial={"modal": 0.5})
     prueba.sidebar.selectbox[0].set_value("Grupo A — RetailNova Madrid").run()
     assert prueba.session_state["plan"] == {}
+    assert prueba.session_state["plan3"] == {}
     # Las cajas de texto se vuelven a dibujar vacías, no con lo de antes.
     assert all(not v for v in prueba.session_state["respuestas2"].values())
     assert prueba.session_state["paso2"] == 0

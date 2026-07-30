@@ -103,40 +103,129 @@ sesión se reenvía el HTML en cada clic, así que allí va el pequeño.
 - [x] Tutor de guardia (Gemini) en las dos sesiones, sin dependencias nuevas
 - [x] Sesión 2 · Descarbonización: simulador de palancas con presupuesto y
       plan descargable
+- [x] **Ampliación de la Sesión 2 (30 jul 2026): transporte desagregado y
+      alcance 3.** Vía A, doble objetivo. 738 pruebas en verde.
 
 ### Siguiente
+- [ ] Demo con alumnos en los próximos días. Después, afinar con lo que se
+      vea.
 - [ ] Afinar las dos sesiones con lo que se aprenda en la clase del 8 de
-      septiembre. **Nada estructural hasta entonces.**
+      septiembre.
+
+## La ampliación de la Sesión 2 (hecha el 30 jul 2026)
+
+Se eligió la **Vía A · doble objetivo**. El 25 % sigue midiéndose sobre
+alcances 1 y 2, con su presupuesto y su calibración intactos, y el alcance 3
+va aparte, con su propio objetivo y su propio presupuesto. Hay una prueba
+(`test_el_objetivo_del_25_sigue_midiendose_sobre_alcances_1_y_2`) que impide
+que alguien meta el alcance 3 en el denominador y tumbe la calibración.
+
+### El transporte, desagregado
+
+`rutas` era un solo deslizador con tres conceptos dentro. Ahora son tres
+palancas distintas, y las seis de los alcances 1 y 2 quedan así:
+
+| Palanca | Qué decide | Dato que usa |
+|---|---|---|
+| `refrigerante` | Reconvertir el frío a CO₂ | `refrigerantes.csv` |
+| `electrificacion` | Furgonetas eléctricas | `flota.csv` |
+| `vacio` | Kilómetros sin carga, suelo del 12 % | `rutas.csv` → `km_en_vacio` |
+| `carga` | Ocupación media, techo del 86 % | `rutas.csv` → `ocupacion_media` |
+| `consolidacion` | Recogida en tienda, techo del 55 % | `pedidos_online.csv` + `entregas_fallidas` |
+| `energia` | Iluminación, frío eficiente, fotovoltaica | `energia.csv` |
+
+`vacio` y `carga` miden cosas distintas y conviene poder decirlo en clase:
+un camión puede ir siempre cargado y aun así ir medio vacío. Pasar del 60 %
+al 80 % de ocupación no ahorra un 20 % de kilómetros, ahorra un 25 %.
+
+`consolidacion` solo toca la última milla —las furgonetas, no los rígidos— y
+rinde más donde fallan más entregas, porque un pedido recogido en el
+mostrador no puede fallar. **Madrid es quien más gana con ella**, que es
+justo el problema que descubrió en la Sesión 1. Hay prueba que lo fija.
+
+**Recalibrado:** con el mejor plan posible las filiales llegan al 30-36 %
+(antes 29-34 %). Sigue cumpliéndose que ninguna palanca suelta le basta a
+Madrid, Barcelona ni Bilbao, y que a Valencia y Sevilla el refrigerante casi
+les basta.
+
+### El alcance 3
+
+Vive en `core/alcance3.py`. Tres categorías, todas con dato real detrás:
+fabricar lo comprado (estimación por gasto sobre `compras.csv`), traerlo
+(toneladas × distancia × modo, desde `pais_origen`) y tratar los residuos.
+
+El alcance 3 sale **entre 8 y 24 veces mayor** que los alcances 1 y 2 según
+la filial: lo operativo es solo el 4-11 % de la huella real. Es la cifra que
+da el susto, y por eso el paso 4 va **después** de que el grupo haya cerrado
+su plan y lo haya justificado por escrito. Enseñarlo antes lo convertiría en
+un dato más.
+
+Sus tres palancas, con objetivo del 10 % y presupuesto propio (0,45 % de las
+ventas):
+
+| Palanca | Qué hace | Papel en la sesión |
+|---|---|---|
+| `modal` | Bajar del avión al barco la mercancía asiática | La tonelada más barata del caso. **Barcelona es quien más gana**: cierra su dilema en carbono |
+| `proveedores` | Programa de medición y mejora con proveedores | La palanca grande: fabricar es la mayor parte del inventario |
+| `origen` | Relocalizar compra asiática a Turquía | **La trampa.** Suena a la medida más verde y es la más cara por tonelada |
+
+**La trampa del alcance 3:** gastarse el presupuesto entero en acercar la
+cadena se queda por debajo de la mitad del objetivo. Comprar en Turquía
+cuesta un 15 % más que comprar en China, y ese sobrecoste se come el
+presupuesto. Hay prueba que lo verifica en las cinco filiales.
+
+**Se enseña el defecto del método.** La estimación por gasto tiene una
+trampa que el paso 4 explica en voz alta: negociar un descuento del 5 % con
+el proveedor baja la huella un 5 % sin que cambie nada en la fábrica. Sirve
+para saber dónde mirar, no para reclamar una reducción.
+
+### Lo que se tocó fuera de la Sesión 2
+
+- `datos/retailnova/parametros.py` y el generador: factores de alcance 3.
+  **Solo cambió `factores_emision.csv`**; los demás CSV son idénticos byte a
+  byte, comprobado con `md5sum` antes y después de regenerar.
+- Sesión 1: una línea que admite que falta el alcance 3 y lo emplaza a la
+  Sesión 2. Antes el inventario se presentaba como completo sin serlo.
+- `core/plan.py`: el plan descargable lleva secciones 4 y 5. **Las dos
+  reducciones no se suman en un solo porcentaje**, y hay prueba que lo
+  impide: sumarlas sería el error que la sesión intenta desmontar.
+- `core/tutor.py`: banco de reserva propio para las dos preguntas nuevas.
 
 ## Sesión 2 · cómo está montada
 
-Tres pasos, estructura mixta: arranque guiado corto y después simulador
+Cuatro pasos, estructura mixta: arranque guiado corto y después simulador
 libre. Es la segunda vez que tocan la herramienta.
 
-1. **De dónde partís** — su huella y su conclusión de la Sesión 1, que
-   vuelven a introducir a mano leyéndola de su informe impreso
+1. **De dónde partís** — qué es una huella y dónde está la frontera de su
+   inventario, más su conclusión de la Sesión 1, que vuelven a introducir a
+   mano leyéndola de su informe impreso
 2. **Vuestras palancas** — coste por tonelada de cada medida *en su filial*
 3. **Vuestro plan** — simulador con presupuesto y plan descargable
+4. **Lo que no estabais mirando** — el alcance 3
 
 **Objetivo: −25 %. Presupuesto: 2,5 % de las ventas anuales**, presentado
 como plan de inversión a tres años. El modelo vive en `core/palancas.py`.
+El paso 4 tiene objetivo y presupuesto propios y vive en `core/alcance3.py`.
 
 **El equilibrio está calibrado y protegido por pruebas.** Con el mejor plan
-posible cada filial llega al 29-34 %: el objetivo es alcanzable eligiendo
+posible cada filial llega al 30-36 %: el objetivo es alcanzable eligiendo
 bien e imposible eligiendo mal. Si alguien toca un coste o el presupuesto y
 rompe eso, `tests/test_palancas.py` lo detecta.
 
 | Filial | Palanca más rentable | Detalle |
 |---|---|---|
-| A · Madrid | Energía | Ninguna palanca suelta le llega: tiene que combinar |
-| B · Barcelona | Energía | Igual que Madrid |
+| A · Madrid | Factor de carga, luego recogida en tienda | Ninguna palanca suelta le llega: tiene que combinar |
+| B · Barcelona | Factor de carga, luego energía | Igual que Madrid |
 | C · Valencia | Refrigerante (1.116 €/t) | Cambiar el R-404A casi le basta |
-| D · Sevilla | Refrigerante (1.173 €/t) | Y le queda margen en rutas |
-| E · Bilbao | Energía | El refrigerante no le sirve: ya migró a CO₂ |
+| D · Sevilla | Refrigerante (1.173 €/t) | Y le queda margen en vacío y en carga |
+| E · Bilbao | Recogida en tienda, luego energía | El refrigerante no le sirve: ya migró a CO₂ |
 
-**La trampa del caso:** si Bilbao copia el plan de Valencia, se gasta 1,4 M€
-en cambiar un refrigerante que ya cambió y reduce cero. Hay una prueba que lo
-verifica y la interfaz se lo avisa, pero solo después de que lo intenten.
+**Las dos trampas del caso:** si Bilbao copia el plan de Valencia, se gasta
+1,4 M€ en cambiar un refrigerante que ya cambió y reduce cero. Y en el paso
+4, quien se gaste el presupuesto de alcance 3 en acercar la cadena de
+suministro se queda por debajo de la mitad de su objetivo. Las dos están
+verificadas por pruebas y las dos se avisan en pantalla, pero solo después
+de que lo intenten.
 
 ## El tutor de guardia
 
@@ -291,3 +380,31 @@ inverosímil.
 - **2026-07-29** — El tutor solo pregunta, nunca responde. Si el modelo
   devuelve una afirmación, una parrafada o varias preguntas, se descarta y
   sale una del banco escrito a mano. Regalar el hallazgo destruiría la sesión.
+- **2026-07-30** — Alcance 3 con **doble objetivo** (Vía A) y no inventario
+  único. El 25 % está calibrado sobre alcances 1 y 2; meter el alcance 3 en
+  el denominador lo habría vuelto inalcanzable y habría invalidado el guion
+  del profesor a seis semanas de la primera clase. Además es lo que hacen
+  las empresas reales. Hay una prueba que impide que alguien lo junte.
+- **2026-07-30** — El paso del alcance 3 va **al final**, después de que el
+  grupo haya cerrado y justificado su plan. Puesto antes sería un dato más;
+  puesto después corrige una conclusión que acaban de defender por escrito.
+- **2026-07-30** — El transporte se parte en tres palancas (`vacio`, `carga`,
+  `consolidacion`). Con un solo deslizador el alumno no distinguía qué
+  estaba decidiendo, y dos de los tres conceptos ni siquiera se calculaban
+  pese a tener el dato generado.
+- **2026-07-30** — `consolidacion` se cobra por tienda equipada y no sobre
+  la venta online desviada. Con el coste sobre ventas, Madrid —que es quien
+  tiene el problema de última milla— salía penalizado por vender mucho
+  online, y la palanca que cierra su hallazgo de la Sesión 1 le resultaba
+  cara. Por tienda es además lo que de verdad se compra: infraestructura.
+- **2026-07-30** — El alcance 3 se estima **por gasto**, y la sesión enseña
+  el defecto del método en voz alta: negociar un descuento baja la huella
+  sin cambiar nada físico. Ocultarlo habría enseñado a confiar en una cifra
+  que no lo merece.
+- **2026-07-30** — El plan descargable **no suma las dos reducciones** en un
+  solo porcentaje. Hay una prueba que lo impide: sumarlas sería exactamente
+  el error que la sesión intenta desmontar.
+- **2026-07-30** — Los factores de alcance 3 entran por `parametros.py` y el
+  generador, no a mano en el CSV. Regenerar solo cambió `factores_emision.csv`;
+  el resto quedó idéntico byte a byte (comprobado con `md5sum`), así que las
+  cifras que ya conocía Tomás no se movieron.

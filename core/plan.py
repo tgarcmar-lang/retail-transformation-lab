@@ -10,7 +10,7 @@ from __future__ import annotations
 import html
 from datetime import datetime
 
-from core import filiales, informe, palancas
+from core import alcance3, filiales, informe, palancas
 
 #: Preguntas de la sesión. La clave es la que usa el módulo para guardar la
 #: respuesta; el texto es lo que sale impreso.
@@ -23,6 +23,10 @@ PREGUNTAS = {
     "justificacion": "¿Por qué este plan y no otro? ¿Qué habéis dejado fuera?",
     "riesgo": "¿Qué es lo que más fácilmente puede salir mal?",
     "siguiente_euro": "Si os dieran un millón más, ¿en qué lo gastaríais?",
+    "alcance3_reaccion": "Con la huella entera delante, ¿sigue siendo el plan "
+                         "correcto? ¿Qué cambiaríais?",
+    "alcance3_limite": "¿Qué parte de vuestro alcance 3 no controláis, y a "
+                       "quién habría que convencer para moverla?",
 }
 
 
@@ -58,7 +62,7 @@ def _tabla_plan(resultado: dict) -> str:
     for fila in resultado["detalle"]:
         if fila["intensidad"] <= 0:
             intensidad = "No se aplica"
-        elif fila["codigo"] == "rutas":
+        elif fila["codigo"] in palancas.EN_PUNTOS:
             intensidad = _num(fila["intensidad"], 1) + " puntos"
         else:
             intensidad = _pct(fila["intensidad"], 0)
@@ -85,8 +89,91 @@ def _tabla_plan(resultado: dict) -> str:
     )
 
 
+def _seccion_alcance3(grupo: str, resultado3: dict | None) -> str:
+    """El inventario completo y el plan de alcance 3, si lo hay.
+
+    Va al final del documento y con su propia tabla, no mezclada con la de
+    alcances 1 y 2. Sumar las dos reducciones en un solo porcentaje sería
+    justo el error que la sesión intenta desmontar.
+    """
+    inv = alcance3.inventario(grupo)
+
+    tarjetas = "".join([
+        _tarjeta("Alcances 1 y 2", f'{_num(inv["operativo_t"], 0)} t'),
+        _tarjeta("Alcance 3", f'{_num(inv["alcance3_t"], 0)} t'),
+        _tarjeta("Huella real", f'{_num(inv["total_t"], 0)} t'),
+        _tarjeta("Lo que pesa vuestro plan operativo",
+                 _pct(inv["pct_operativo"])),
+    ])
+
+    filas = "".join(
+        f"<tr><td>{html.escape(fila.concepto)}</td>"
+        f'<td class="num">{fila.alcance}</td>'
+        f'<td class="num">{_num(fila.co2e_t, 0)} t</td>'
+        f'<td class="num">{_pct(fila.pct)}</td></tr>'
+        for fila in alcance3.desglose(grupo).itertuples()
+    )
+    inventario = (
+        "<table><thead><tr><th>Concepto</th>"
+        '<th class="num">Alcance</th><th class="num">Emisiones</th>'
+        '<th class="num">Peso</th></tr></thead><tbody>'
+        + filas + "</tbody></table>"
+    )
+
+    if resultado3 is None or resultado3["evitado_t"] <= 0:
+        plan3 = (
+            "<p>El grupo no llegó a construir un plan de alcance 3 en esta "
+            "sesión.</p>"
+        )
+    else:
+        detalle = "".join(
+            f"<tr><td>{html.escape(fila['nombre'])}</td>"
+            f'<td class="num">{_pct(fila["intensidad"], 0)}</td>'
+            f'<td class="num">{_num(fila["evitado_t"], 0)} t</td>'
+            f'<td class="num">{_eur(fila["coste_eur"])}</td></tr>'
+            for fila in resultado3["detalle"]
+        )
+        plan3 = (
+            "<table><thead><tr><th>Palanca</th>"
+            '<th class="num">Intensidad</th><th class="num">Evita</th>'
+            '<th class="num">Inversión</th></tr></thead><tbody>'
+            + detalle
+            + f'<tr class="propia"><td>Total</td><td class="num"></td>'
+              f'<td class="num">{_num(resultado3["evitado_t"], 0)} t</td>'
+              f'<td class="num">{_eur(resultado3["coste_eur"])}</td></tr>'
+            + "</tbody></table>"
+            + f'<p>Reducción del alcance 3: <strong>'
+              f'{_pct(resultado3["reduccion"])}</strong> sobre un objetivo del '
+              f'{_pct(alcance3.OBJETIVO3, 0)}, con una inversión de '
+              f'{_eur(resultado3["coste_eur"])} sobre un presupuesto de '
+              f'{_eur(resultado3["presupuesto_eur"])}.</p>'
+        )
+
+    return f"""
+<h2>4 · La huella entera</h2>
+<div class="tarjetas">{tarjetas}</div>
+<p>El plan de las secciones anteriores actúa sobre los alcances 1 y 2, que
+son <strong>{_pct(inv["pct_operativo"])}</strong> de la huella real de la
+filial. No es un defecto del plan: es lo que le pasa a cualquier minorista,
+porque un distribuidor apenas fabrica y casi todo lo que emite lo emite otro
+por encargo suyo.</p>
+{inventario}
+<p>El alcance 3 de las compras está estimado por gasto, multiplicando el
+importe comprado por un factor medio de categoría y por la intensidad del
+país de fabricación. Sirve para saber dónde mirar, no para reclamar una
+reducción: negociar un descuento con el proveedor bajaría esta cifra sin que
+cambiase nada en la fábrica.</p>
+
+<h2>5 · El plan de alcance 3</h2>
+{plan3}
+<p>Las dos reducciones no se suman en un solo porcentaje, y no es un descuido:
+son inventarios distintos, con objetivos distintos y presupuestos distintos.
+Así es como publican sus objetivos las empresas que lo hacen bien.</p>
+"""
+
+
 def generar(grupo: str, resultado: dict, respuestas: dict[str, str],
-            integrantes: str = "") -> str:
+            integrantes: str = "", resultado3: dict | None = None) -> str:
     """Construye el plan completo en HTML."""
     filial = filiales.obtener(grupo)
     fecha = datetime.now().strftime("%d/%m/%Y")
@@ -142,7 +229,7 @@ la más eficiente, y una barata puede no servir de nada en esta filial.</p>
 
 <h2>3 · El razonamiento del grupo</h2>
 {secciones}
-
+{_seccion_alcance3(grupo, resultado3)}
 <div class="pie">
   <p>Datos sintéticos generados para uso docente. RetailNova Europa es una
   empresa ficticia. El presupuesto corresponde a un plan de inversión a tres

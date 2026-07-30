@@ -42,14 +42,31 @@ COSTE_FURGONETA_ELECTRICA = 26_000.0
 #: Consumo de la furgoneta eléctrica. Emite, pero a través de la red.
 CONSUMO_ELECTRICO_KWH_KM = 0.25
 
-# --- Palanca 3 · Rutas y recogida en tienda -------------------------------
+# --- Palanca 3 · Kilómetros en vacío --------------------------------------
 #: Por debajo de este porcentaje de kilómetros en vacío no se puede bajar:
 #: siempre hay retornos que no se pueden llenar.
 VACIO_MINIMO = 0.12
 #: Coste por cada punto porcentual de vacío eliminado.
-COSTE_RUTAS_POR_PUNTO = 52_000.0
+COSTE_VACIO_POR_PUNTO = 52_000.0
 
-# --- Palanca 4 · Energía en instalaciones ---------------------------------
+# --- Palanca 4 · Factor de carga ------------------------------------------
+#: Ocupación máxima realista de un vehículo de reparto. El 100 % no existe:
+#: la mercancía no encaja perfectamente y las rutas no se llenan a voluntad.
+OCUPACION_MAXIMA = 0.86
+#: Coste por cada punto porcentual de ocupación ganado.
+COSTE_CARGA_POR_PUNTO = 46_000.0
+
+# --- Palanca 5 · Consolidación y recogida en tienda -----------------------
+#: Hasta dónde puede llegar la recogida en tienda. Más de la mitad de los
+#: pedidos no se puede empujar al mostrador sin perder clientes.
+RECOGIDA_MAXIMA = 0.55
+#: Inversión por cada punto de recogida ganado y por cada tienda que hay que
+#: equipar: taquillas, espacio de preparación y sistema de avisos. Se cobra
+#: por tienda y no por euro vendido porque lo que se monta es infraestructura
+#: física: una taquilla cuesta lo mismo sirva pedidos caros o baratos.
+COSTE_RECOGIDA_POR_PUNTO_Y_TIENDA = 700.0
+
+# --- Palanca 6 · Energía en instalaciones ---------------------------------
 #: Reducción máxima del consumo eléctrico con iluminación, frío eficiente y
 #: fotovoltaica en cubierta.
 REDUCCION_ENERGIA_MAXIMA = 0.40
@@ -96,17 +113,48 @@ PALANCAS: list[Palanca] = [
         ),
     ),
     Palanca(
-        codigo="rutas",
-        nombre="Optimizar rutas y recogida en tienda",
+        codigo="vacio",
+        nombre="Eliminar kilómetros en vacío",
         descripcion=(
-            "Reducir los kilómetros que se recorren sin carga, agrupando "
-            "entregas y fomentando que el cliente recoja su pedido en tienda."
+            "Planificar los retornos para que el vehículo no vuelva de "
+            "descargar sin nada dentro: cargas de retorno, rutas circulares "
+            "y coordinación con los proveedores que os traen mercancía."
         ),
         unidad="puntos porcentuales de kilómetros en vacío que se eliminan",
         ayuda=(
-            "Es la palanca más barata, pero tiene techo: por debajo del 12 % "
-            "de vacío no se puede bajar. Si ya estáis cerca de ese suelo, "
-            "aquí no os queda margen."
+            "Tiene techo: por debajo del 12 % de vacío no baja nadie, porque "
+            "siempre hay retornos que no se pueden llenar. Si ya estáis cerca "
+            "de ese suelo, aquí no os queda margen."
+        ),
+    ),
+    Palanca(
+        codigo="carga",
+        nombre="Mejorar el factor de carga",
+        descripcion=(
+            "Llenar mejor el vehículo que ya sale: consolidar envíos, "
+            "reagrupar pedidos pequeños y replantear la frecuencia de "
+            "reparto a las tiendas para mover lo mismo en menos viajes."
+        ),
+        unidad="puntos porcentuales de ocupación media que se ganan",
+        ayuda=(
+            "Es distinta del vacío. Un camión puede ir siempre cargado y aun "
+            "así ir medio vacío: eso es el factor de carga. Mirad vuestra "
+            "ocupación media antes de decidir cuánto margen tenéis."
+        ),
+    ),
+    Palanca(
+        codigo="consolidacion",
+        nombre="Recogida en tienda",
+        descripcion=(
+            "Desviar pedidos del reparto a domicilio al mostrador o a una "
+            "taquilla de la tienda. El pedido viaja en un camión que ya iba, "
+            "en vez de en una furgoneta que sale solo para él."
+        ),
+        unidad="puntos porcentuales de pedidos que pasan a recogerse en tienda",
+        ayuda=(
+            "Rinde el doble donde fallan muchas entregas: un pedido que se "
+            "recoge en tienda no puede fallar, y cada fallo obliga hoy a "
+            "repetir el viaje entero."
         ),
     ),
     Palanca(
@@ -151,19 +199,39 @@ def linea_base(grupo: str, anio: int | None = None) -> dict:
     }
 
 
+def ultima_milla_t(grupo: str, anio: int | None = None) -> float:
+    """Emisiones de las furgonetas, en toneladas.
+
+    Es lo que se juega en la última milla. Separarlo de los rígidos importa:
+    en Madrid las furgonetas son un tercio de las emisiones de la flota y en
+    Sevilla apenas un décimo, así que la misma medida vale cosas muy
+    distintas en cada sitio.
+    """
+    anio = anio or datos.ultimo_anio()
+    consumo = datos.de_la_filial("consumo_flota", grupo)
+    consumo = consumo[(consumo["mes"].dt.year == anio)
+                      & (consumo["tipo"] == "furgoneta")]
+    return float(consumo["co2e_kg"].sum()) / 1_000
+
+
 def topes(grupo: str, anio: int | None = None) -> dict[str, float]:
     """Hasta dónde puede llegar cada palanca en esta filial.
 
     No todas dan lo mismo en todas partes. Sevilla tiene mucho margen en
-    rutas y Bilbao casi ninguno, porque ya está en el 13,8 %.
+    vacío y en factor de carga; Bilbao casi ninguno, porque ya está en el
+    13,8 % de vacío y en el 83 % de ocupación.
     """
     anio = anio or datos.ultimo_anio()
     log = kpis.logistica(grupo, anio)
-    vacio = log["pct_km_en_vacio"]
+    canal = kpis.canal(grupo, anio)
     return {
         "refrigerante": 1.0,
         "electrificacion": 1.0,
-        "rutas": max(0.0, (vacio - VACIO_MINIMO) * 100),  # en puntos
+        "vacio": max(0.0, (log["pct_km_en_vacio"] - VACIO_MINIMO) * 100),
+        "carga": max(0.0, (OCUPACION_MAXIMA - log["ocupacion_media"]) * 100),
+        "consolidacion": max(
+            0.0, (RECOGIDA_MAXIMA - canal["pct_recogida_en_tienda"]) * 100
+        ),
         "energia": REDUCCION_ENERGIA_MAXIMA,
     }
 
@@ -196,14 +264,54 @@ def _electrificacion(grupo: str, intensidad: float, base: dict) -> tuple[float, 
     return gasoleo_evitado - electricidad_anadida, coste
 
 
-def _rutas(grupo: str, intensidad: float, base: dict) -> tuple[float, float]:
+def _vacio(grupo: str, intensidad: float, base: dict) -> tuple[float, float]:
     """`intensidad` va en puntos porcentuales de vacío eliminados."""
     log = kpis.logistica(grupo)
-    vacio = log["pct_km_en_vacio"]
-    puntos = min(intensidad, max(0.0, (vacio - VACIO_MINIMO) * 100))
-    coste = puntos * COSTE_RUTAS_POR_PUNTO
+    puntos = min(intensidad, max(0.0, (log["pct_km_en_vacio"] - VACIO_MINIMO) * 100))
+    coste = puntos * COSTE_VACIO_POR_PUNTO
     # Menos kilómetros son menos litros, en proporción directa.
     evitado = base["flota_t"] * (puntos / 100)
+    return evitado, coste
+
+
+def _carga(grupo: str, intensidad: float, base: dict) -> tuple[float, float]:
+    """`intensidad` va en puntos porcentuales de ocupación ganados.
+
+    Mover la misma mercancía con el vehículo más lleno significa hacer menos
+    viajes, en proporción inversa a la ocupación: pasar del 60 % al 80 % no
+    ahorra un 20 % de kilómetros, ahorra un 25 %.
+    """
+    log = kpis.logistica(grupo)
+    ocupacion = log["ocupacion_media"]
+    puntos = min(intensidad, max(0.0, (OCUPACION_MAXIMA - ocupacion) * 100))
+    if puntos <= 0 or ocupacion <= 0:
+        return 0.0, 0.0
+    nueva = ocupacion + puntos / 100
+    evitado = base["flota_t"] * (1 - ocupacion / nueva)
+    return evitado, puntos * COSTE_CARGA_POR_PUNTO
+
+
+def _consolidacion(grupo: str, intensidad: float, base: dict) -> tuple[float, float]:
+    """`intensidad` va en puntos porcentuales de pedidos que pasan a tienda.
+
+    Solo toca la última milla: los rígidos que abastecen a las tiendas
+    siguen saliendo igual. Y rinde más donde fallan más entregas, porque el
+    pedido que se recoge en el mostrador no puede fallar y hoy cada fallo
+    obliga a repetir el viaje.
+    """
+    canal = kpis.canal(grupo)
+    log = kpis.logistica(grupo)
+    recogida = canal["pct_recogida_en_tienda"]
+    a_domicilio = 1 - recogida
+    puntos = min(intensidad, max(0.0, (RECOGIDA_MAXIMA - recogida) * 100))
+    if puntos <= 0 or a_domicilio <= 0:
+        return 0.0, 0.0
+
+    proporcion = (puntos / 100) / a_domicilio
+    evitado = (ultima_milla_t(grupo) * proporcion
+               * (1 + log["pct_entregas_fallidas"]))
+    tiendas = len(datos.de_la_filial("tiendas", grupo))
+    coste = puntos * tiendas * COSTE_RECOGIDA_POR_PUNTO_Y_TIENDA
     return evitado, coste
 
 
@@ -218,9 +326,15 @@ def _energia(grupo: str, intensidad: float, base: dict) -> tuple[float, float]:
 CALCULOS = {
     "refrigerante": _refrigerante,
     "electrificacion": _electrificacion,
-    "rutas": _rutas,
+    "vacio": _vacio,
+    "carga": _carga,
+    "consolidacion": _consolidacion,
     "energia": _energia,
 }
+
+#: Palancas que se expresan en puntos porcentuales y no en porcentaje de un
+#: tope. La interfaz y el informe las presentan distinto.
+EN_PUNTOS = {"vacio", "carga", "consolidacion"}
 
 
 # --------------------------------------------------------------------------

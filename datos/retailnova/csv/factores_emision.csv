@@ -5,3 +5,11 @@ R-404A,kg CO2e/kg,3922.0,1
 R-449A,kg CO2e/kg,1397.0,1
 R-744,kg CO2e/kg,1.0,1
 Electricidad (mix español),kg CO2e/kWh,0.17,2
+Compras · Moda y belleza,kg CO2e/€,0.62,3
+Compras · Hogar y electrónica,kg CO2e/€,0.48,3
+Compras · Alimentación y hostelería,kg CO2e/€,0.88,3
+Transporte por carretera,kg CO2e/t·km,0.105,3
+Transporte marítimo,kg CO2e/t·km,0.016,3
+Transporte aéreo,kg CO2e/t·km,0.602,3
+Residuo a vertedero,kg CO2e/kg,0.45,3
+Residuo reciclado,kg CO2e/kg,0.021,3

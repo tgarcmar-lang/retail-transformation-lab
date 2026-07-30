@@ -112,6 +112,20 @@ RESERVA = {
         "¿Ese coste es dinero que se pierde cada año, o una sola vez?",
         "¿Cuánto de ese coste creéis que se podría llegar a evitar?",
     ],
+    "s2_alcance3_reaccion": [
+        "Vuestro plan reduce sobre la parte pequeña del inventario. ¿Eso lo "
+        "invalida, o sigue habiendo una razón para hacerlo primero?",
+        "Si tuvierais que elegir entre una tonelada de alcance 1 y una de "
+        "alcance 3, ¿valen lo mismo? ¿Para quién?",
+        "¿Qué le diríais a un accionista que os acusara de haber medido solo "
+        "lo que os convenía?",
+    ],
+    "s2_alcance3_limite": [
+        "De lo que habéis señalado, ¿qué parte podríais cambiar vosotros "
+        "solos y qué parte necesita que otro acepte cambiar?",
+        "¿Qué tendría que ganar ese proveedor para querer moverse?",
+        "Si el proveedor os dice que no, ¿qué os queda?",
+    ],
     "propuesta": [
         "Vuestra propuesta, ¿ataca la causa que habéis identificado o ataca "
         "otro problema distinto?",

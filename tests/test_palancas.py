@@ -104,9 +104,85 @@ def test_el_orden_de_las_palancas_cambia_segun_la_filial():
     assert len(set(primeras.values())) >= 2, primeras
 
 
-def test_sevilla_tiene_mas_margen_en_rutas_que_bilbao():
+def test_sevilla_tiene_mas_margen_en_vacio_que_bilbao():
     """Sevilla va al 34 % de vacío y Bilbao al 13,8 %: no es comparable."""
-    assert pl.topes("D")["rutas"] > pl.topes("E")["rutas"] * 5
+    assert pl.topes("D")["vacio"] > pl.topes("E")["vacio"] * 5
+
+
+# --------------------------------------------------------------------------
+# El transporte está desagregado
+# --------------------------------------------------------------------------
+
+def test_las_tres_palancas_de_transporte_son_distintas():
+    """Vacío, factor de carga y recogida en tienda son decisiones distintas.
+
+    Antes iban en un solo control y el alumno no distinguía qué estaba
+    decidiendo. Si alguien las vuelve a juntar, esta prueba lo dice.
+    """
+    codigos = {palanca.codigo for palanca in pl.PALANCAS}
+    assert {"vacio", "carga", "consolidacion"} <= codigos
+    assert "rutas" not in codigos
+
+
+@pytest.mark.parametrize("grupo", GRUPOS)
+def test_vacio_y_carga_miden_cosas_distintas(grupo):
+    """Un vehículo puede ir siempre cargado y aun así ir medio vacío."""
+    from core import kpis
+    log = kpis.logistica(grupo)
+    assert pl.topes(grupo)["vacio"] == pytest.approx(
+        max(0.0, (log["pct_km_en_vacio"] - pl.VACIO_MINIMO) * 100)
+    )
+    assert pl.topes(grupo)["carga"] == pytest.approx(
+        max(0.0, (pl.OCUPACION_MAXIMA - log["ocupacion_media"]) * 100)
+    )
+
+
+def test_sevilla_es_quien_mas_gana_llenando_el_camion():
+    """Va al 60 % de ocupación: es la peor del grupo y con diferencia."""
+    ganancia = {
+        grupo: pl.simular(grupo, {"carga": pl.topes(grupo)["carga"]})["reduccion"]
+        for grupo in GRUPOS
+    }
+    assert max(ganancia, key=ganancia.get) == "D", ganancia
+
+
+def test_bilbao_casi_no_tiene_margen_en_transporte():
+    """Ya va al 83 % de ocupación y al 13,8 % de vacío: hizo los deberes."""
+    for palanca in ("vacio", "carga"):
+        assert pl.topes("E")[palanca] < pl.topes("D")[palanca] / 5
+
+
+def test_la_recogida_en_tienda_solo_toca_la_ultima_milla():
+    """Los rígidos que abastecen tiendas siguen saliendo igual.
+
+    Si esta palanca tocase la flota entera, Sevilla —que casi no tiene
+    furgonetas— saldría beneficiada de algo que no le pasa.
+    """
+    for grupo in GRUPOS:
+        tope = pl.topes(grupo)["consolidacion"]
+        evitado = pl.simular(grupo, {"consolidacion": tope})["evitado_t"]
+        assert evitado <= pl.ultima_milla_t(grupo) * 1.1
+
+
+def test_madrid_es_quien_mas_gana_con_la_recogida_en_tienda():
+    """Su problema de la Sesión 1 son las entregas fallidas.
+
+    Cierra el círculo: el grupo que descubrió que falla el 4,1 % de sus
+    entregas encuentra aquí la medida que ataca justamente eso.
+    """
+    evitado = {
+        grupo: pl.simular(
+            grupo, {"consolidacion": pl.topes(grupo)["consolidacion"]}
+        )["evitado_t"]
+        for grupo in GRUPOS
+    }
+    assert max(evitado, key=evitado.get) == "A", evitado
+
+
+@pytest.mark.parametrize("grupo", GRUPOS)
+def test_la_ultima_milla_es_parte_de_la_flota(grupo):
+    base = pl.linea_base(grupo)
+    assert 0 < pl.ultima_milla_t(grupo) < base["flota_t"]
 
 
 @pytest.mark.parametrize("grupo", GRUPOS)
@@ -124,7 +200,8 @@ def test_ninguna_palanca_puede_pasarse_de_su_tope(grupo):
 
 @pytest.mark.parametrize("plan", [
     {}, {"refrigerante": -1}, {"energia": 0}, {"inventada": 1.0},
-    {"rutas": None}, {"electrificacion": 1e9},
+    {"vacio": None}, {"electrificacion": 1e9}, {"carga": -50},
+    {"consolidacion": 1e9}, {"rutas": 10},
 ])
 def test_un_plan_raro_no_revienta(plan):
     """El alumno mueve controles: no puede ver un error por eso."""
@@ -219,9 +296,16 @@ def test_el_mejor_plan_cabe_en_el_presupuesto(grupo):
 # Contenido
 # --------------------------------------------------------------------------
 
-def test_hay_cuatro_palancas_con_codigo_unico():
-    assert len(pl.PALANCAS) == 4
-    assert len({palanca.codigo for palanca in pl.PALANCAS}) == 4
+def test_hay_seis_palancas_con_codigo_unico():
+    assert len(pl.PALANCAS) == 6
+    assert len({palanca.codigo for palanca in pl.PALANCAS}) == 6
+
+
+def test_toda_palanca_tiene_calculo_y_tope():
+    """Añadir una palanca a la lista y olvidarse del cálculo es fácil."""
+    for palanca in pl.PALANCAS:
+        assert palanca.codigo in pl.CALCULOS
+        assert palanca.codigo in pl.topes("A")
 
 
 def test_cada_palanca_se_explica_en_espanol():

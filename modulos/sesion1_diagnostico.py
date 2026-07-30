@@ -387,6 +387,12 @@ def _paso_que_emite(grupo: str) -> None:
         "**Alcance 2** son las de la electricidad que compráis, que emite quien "
         "la produce. Las dos cuentan, y sobre las dos se puede actuar."
     )
+    st.caption(
+        "Esto no es toda vuestra huella: falta el **alcance 3**, que es lo que "
+        "emiten otros por encargo vuestro, empezando por fabricar lo que "
+        "vendéis. Se abre en la Sesión 2. Retenedlo, porque cambia el tamaño "
+        "del problema."
+    )
 
     _pista(
         "- ¿Qué fuente pesa más? ¿Es la que esperabais?\n"

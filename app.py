@@ -88,6 +88,9 @@ with st.sidebar:
             st.session_state["respuestas"] = {}
             st.session_state["respuestas2"] = {}
             st.session_state["plan"] = {}
+            st.session_state["plan3"] = {}
+            st.session_state.pop("resultado", None)
+            st.session_state.pop("resultado3", None)
             st.session_state["tutor_respuestas"] = {}
             st.session_state["paso"] = 0
             st.session_state["paso2"] = 0
