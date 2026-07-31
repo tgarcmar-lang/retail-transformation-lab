@@ -46,11 +46,12 @@ Sesión 7
 Si el usuario pide algo de esta lista, recuérdale que está pospuesto, no descartado.
 La inflación de alcance es el principal riesgo de este proyecto.
 
-**Las sesiones 3 y 4 salieron de esta lista el 31 de julio de 2026 por
+**Las sesiones 3 a 6 salieron de esta lista el 31 de julio de 2026 por
 decisión expresa de Tomás**, que levantó la restricción para cubrir dos
-competencias del programa: logística verde y economía circular, y medición y
-reporting ESG. En los dos casos se le recordó la decisión vinculante del 29
-de julio y la mantuvo. Queda constancia en el registro de decisiones. **Las
+cuatro competencias del programa: logística verde y economía circular,
+medición y reporting ESG, ejecución con métodos ágiles y seguimiento con
+Kanban e híbridos. En cada caso se le recordó la decisión vinculante del 29
+de julio y la mantuvo. Queda constancia en el registro de decisiones. **La
 sesión 7 está comprometida** (gestión del cambio) y pendiente de construir.
 
 ## Decisiones técnicas cerradas
