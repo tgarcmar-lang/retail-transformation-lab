@@ -39,8 +39,8 @@ SESIONES: list[Sesion] = [
     Sesion(
         numero=4,
         titulo="Reporting ESG",
-        objetivo="Construir el cuadro de indicadores para el Consejo.",
-        disponible=False,
+        objetivo="Medir, publicar y defender la memoria de sostenibilidad.",
+        disponible=True,
     ),
     Sesion(
         numero=5,

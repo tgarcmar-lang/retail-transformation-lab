@@ -28,6 +28,8 @@ Valida contenido, KPIs y sentido pedagógico. No le pidas revisar código.
 - Sesión 2: Descarbonización (huella de carbono, simulación, plan de acción).
 - Sesión 3: Logística verde y economía circular (balance de materiales,
   jerarquía de residuos, plan de circularidad).
+- Sesión 4: Medición, reporting y estrategia ESG (doble materialidad,
+  indicadores, memoria de sostenibilidad verificada).
 - Asistente de IA que comenta resultados y plantea preguntas.
 - Panel del profesor para comparar los cinco grupos.
 
@@ -35,15 +37,17 @@ Valida contenido, KPIs y sentido pedagógico. No le pidas revisar código.
 Control Tower · Digital Twin · Robotics Studio · Telecommunications Studio ·
 Agentes multi-rol · Módulo de Dirección de Proyectos · Gestión del Cambio ·
 Comité de Dirección virtual · Otros sectores · Modo Desarrollador ·
-Sesiones 4 a 7
+Sesiones 5 a 7
 
 Si el usuario pide algo de esta lista, recuérdale que está pospuesto, no descartado.
 La inflación de alcance es el principal riesgo de este proyecto.
 
-**La Sesión 3 salió de esta lista el 31 de julio de 2026 por decisión expresa
-de Tomás**, que levantó la restricción para poder cubrir la competencia de
-logística verde y economía circular del programa. Queda constancia en el
-registro de decisiones. Las sesiones 4 a 7 siguen bloqueadas.
+**Las sesiones 3 y 4 salieron de esta lista el 31 de julio de 2026 por
+decisión expresa de Tomás**, que levantó la restricción para cubrir dos
+competencias del programa: logística verde y economía circular, y medición y
+reporting ESG. En los dos casos se le recordó la decisión vinculante del 29
+de julio y la mantuvo. Queda constancia en el registro de decisiones. **Las
+sesiones 5 a 7 siguen bloqueadas.**
 
 ## Decisiones técnicas cerradas
 
@@ -116,7 +120,11 @@ sesión se reenvía el HTML en cada clic, así que allí va el pequeño.
 - [x] **Sesión 3 · Logística verde y economía circular (31 jul 2026).**
       Balance de materiales, jerarquía de residuos, seis palancas y plan
       descargable. Dos tablas de datos nuevas. Guion del profesor incluido.
-      **985 pruebas en verde.**
+- [x] **Sesión 4 · Medición, reporting y estrategia ESG (31 jul 2026).**
+      Doble materialidad calculada desde los datos, catálogo de 25
+      indicadores con su estándar, cinco tentaciones de greenwashing y
+      memoria verificada. Datos sociales nuevos. Guion del profesor incluido.
+      **1.169 pruebas en verde.**
 
 ### Siguiente
 - [ ] Demo con alumnos en los próximos días. Después, afinar con lo que se
@@ -124,8 +132,11 @@ sesión se reenvía el HTML en cada clic, así que allí va el pequeño.
 - [ ] **Sin validar por Tomás:** los factores del alcance 3 (Sesión 2) y los
       del modelo circular (Sesión 3). Son calibraciones mías, verosímiles
       pero no contrastadas contra ninguna base publicada.
-- [ ] **Sin cronometrar:** ninguna de las tres sesiones se ha probado con
-      alumnos. Las tres están planificadas a 90 minutos sobre el papel.
+- [ ] **Sin cronometrar:** ninguna de las cuatro sesiones se ha probado con
+      alumnos. Las cuatro están planificadas a 90 minutos sobre el papel.
+- [ ] **Caduca solo:** el contenido normativo de la Sesión 4 (CSRD, ESRS,
+      SBTi). Verificar antes de cada curso. Es lo único del proyecto que se
+      queda obsoleto sin que nadie toque nada.
 
 ## La ampliación de la Sesión 2 (hecha el 30 jul 2026)
 
@@ -308,6 +319,102 @@ de tablas existentes —las devoluciones de `pedidos_online.csv`, los envases
 del cartón y el plástico de `residuos.csv`— para que no puedan contradecirse.
 **Los quince CSV anteriores quedaron idénticos byte a byte**, comprobado con
 `md5sum`, así que no se movió ninguna cifra de los guiones ya impresos.
+
+## Sesión 4 · cómo está montada
+
+Cuatro pasos, pero **la mecánica cambia**. En las sesiones 2 y 3 había un
+presupuesto y un óptimo que encontrar. Aquí no hay óptimo: hay criterio, y hay
+una firma debajo. La restricción no es el dinero, es que la memoria resista
+una revisión.
+
+1. **A quién hay que contárselo** — la CSRD tras el Ómnibus y el mapa de
+   estándares
+2. **Qué es material** — la matriz de doble materialidad de su filial
+3. **Qué publicáis** — eligen indicadores con límite y toman cinco decisiones
+   de presentación
+4. **La revisión** — el verificador devuelve una opinión y la memoria se
+   descarga con las salvedades dentro
+
+Vive en `core/reporting.py`, y el documento en `core/memoria.py`.
+
+### Las dos ideas
+
+**Doble materialidad.** Un asunto es material por impacto o por consecuencias
+financieras, y **basta con uno**: es una unión, no una intersección. La matriz
+**se calcula con los datos del caso**, así que ningún grupo puede copiar la
+del vecino.
+
+**Se puede engañar sin decir una cifra falsa.** Las cinco tentaciones del paso
+3 son todas literalmente ciertas. Tres son hallazgo grave y dos, salvedad:
+
+| Tentación | Por qué engaña | Gravedad |
+|---|---|---|
+| Sumar el 25 % y el 10 % | Dos inventarios, dos denominadores. El SBTi v2.0 exige separarlos | Grave |
+| Publicar la huella sin declarar su frontera | La cifra deja de ser interpretable y comparable | Grave |
+| Omitir un asunto material | Es lo que detecta la cobertura | Grave |
+| Dar el alcance 3 sin decir el método | Está estimado por gasto | Salvedad |
+| Destacar la tasa de reciclaje | Más de 30 puntos por encima de la circularidad | Salvedad |
+| Publicar solo cifras absolutas | Bajar vendiendo menos no es mejorar | Salvedad |
+
+### El error conceptual que hay que corregir en clase
+
+**Materialidad no es desempeño.** Casi todos los grupos creen que un asunto es
+material si lo hacen mal. La escala se calcula **contra la media** y no de
+mínimo a máximo justo por eso: con la otra escala, Madrid —la más eficiente
+por millón vendido— se habría quedado sin asuntos materiales, y eso es falso.
+El transporte es material en una filial que mueve mucha mercancía aunque la
+mueva bien. Hay prueba que lo fija.
+
+Además, **toda filial informa de al menos cuatro asuntos** (`MINIMO_ASUNTOS`),
+aunque ninguno pase el umbral. Una memoria que dijera «no tenemos asuntos
+materiales» no la firmaría nadie.
+
+| Filial | Sus asuntos materiales | Lo que enseña |
+|---|---|---|
+| A · Madrid | Cadena de valor, trabajo en la cadena, empleo, gobernanza | La más eficiente del grupo y tiene cuatro asuntos: desmonta el error conceptual |
+| B · Barcelona | Trabajo en la cadena (4,6 sobre 5), cadena de valor, gobernanza, envase | Compra el 48 % en países de riesgo y evalúa al 14 % de sus proveedores |
+| C · Valencia | Gases fluorados y merma (5 sobre 5), emisiones propias, empleo, seguridad | Cinco asuntos y diez indicadores de límite: obliga a priorizar |
+| D · Sevilla | Emisiones propias, transporte, gases fluorados, seguridad | Única filial con el transporte material. 148 g CO₂e/t·km, lo peor |
+| E · Bilbao | Cadena de valor, envase, trabajo en la cadena, gobernanza | No supera el umbral en nada: informa por el suelo de cuatro asuntos |
+
+**Barcelona y Bilbao acaban con el mismo conjunto por caminos opuestos**: una
+porque compra mal, la otra porque opera tan bien que solo le queda la cadena
+de valor. Es la mejor comparación de la puesta en común y está aprovechada en
+el guion.
+
+### Los estándares, y su fecha de caducidad
+
+Anclas de la sesión: **ISO 14083:2023** (sobre el GLEC Framework v3.0) para
+transporte y logística, y los **ESRS** de la CSRD como marco obligatorio.
+GHG Protocol, GRI y SBTi se citan y se sitúan.
+
+**Comprobado por búsqueda web el 31 de julio de 2026:**
+
+- **Paquete Ómnibus I** (publicado en febrero de 2026): las empresas obligadas
+  por la CSRD bajan de unas 50.000 a unas 5.000, los ESRS pierden hasta la
+  mitad de sus puntos de dato y el nuevo perímetro se aplica desde el 1 de
+  enero de 2027. RetailNova, con 1.149 M€ y 5.539 empleados, **sigue dentro**.
+- **SBTi Corporate Net-Zero Standard v2.0** (final, junio de 2026, obligatorio
+  para nuevas validaciones desde 2028): **separa los objetivos de alcances 1 y
+  2 de los de alcance 3**, que es exactamente la Vía A de la Sesión 2.
+
+**Esto es lo único del proyecto que caduca solo.** Verificarlo antes de cada
+curso.
+
+### Los datos nuevos
+
+`plantilla.csv`, con semilla propia (22): empleados, temporalidad, rotación,
+accidentes, formación, brecha salarial y mujeres en dirección. Sin dato
+social, «ESG» sería solo la E y cuatro de las cinco filiales no tendrían
+asuntos sociales que declarar. **Los diecisiete CSV anteriores quedaron
+idénticos byte a byte.**
+
+### Nota de rendimiento
+
+`matriz_materialidad` recorre las cinco filiales enteras y cuesta casi un
+segundo. Está cacheada con `lru_cache`, y `core.datos.registrar_cache` permite
+que `limpiar_cache()` la vacíe junto con las demás sin crear importaciones
+circulares. Sin esa caché, la suite de pruebas no terminaba.
 
 ## El tutor de guardia
 
@@ -514,3 +621,31 @@ inverosímil.
   la Sesión 2. Es la misma estructura deliberada: decidir con una unidad,
   comprometerse por escrito y después descubrir que la otra unidad ordena las
   cosas de otra manera.
+- **2026-07-31** — **Levantada también la restricción sobre la Sesión 4.**
+  Segunda reversión expresa de Tomás el mismo día, para cubrir la competencia
+  de medición y reporting ESG. Las sesiones 5 a 7 siguen bloqueadas.
+- **2026-07-31** — La Sesión 4 **no es un cuarto simulador**. Las sesiones 2 y
+  3 comparten mecánica (objetivo, presupuesto, palancas) y una tercera igual
+  habría resultado repetitiva. Además el reporting no es un problema de
+  optimización: no hay óptimo que un deslizador pueda encontrar. La
+  restricción es la revisión del verificador.
+- **2026-07-31** — El contenido normativo se **verificó por búsqueda web** en
+  lugar de escribirlo de memoria. Fue acertado: el paquete Ómnibus había
+  cambiado el perímetro de la CSRD de 50.000 a 5.000 empresas y el SBTi había
+  cerrado su norma v2.0 dos meses antes. Escribirlo de memoria habría
+  enseñado normativa falsa.
+- **2026-07-31** — La materialidad se escala **contra la media** y no de
+  mínimo a máximo. Con la escala anterior, la filial que mejor opera se
+  quedaba sin asuntos materiales, lo cual confunde materialidad con
+  desempeño. Y se añadió un suelo de cuatro asuntos por filial.
+- **2026-07-31** — Las cinco tentaciones de greenwashing son **todas
+  literalmente ciertas**. Ninguna opción del ejercicio es falsa: si lo fueran,
+  la sesión enseñaría a detectar mentiras, que es fácil, en vez de a detectar
+  verdades que engañan, que es el problema real.
+- **2026-07-31** — La memoria descargable lleva **la revisión dentro**, con
+  las salvedades impresas. Que el grupo se lleve su propio documento con la
+  opinión desfavorable escrita debajo es la mitad de la lección.
+- **2026-07-31** — `core.datos.registrar_cache`: las cachés de otros módulos
+  se apuntan en un registro en vez de importarse. `core.datos` no debe
+  conocer a nadie, porque cualquier módulo nuevo crearía una importación
+  circular.

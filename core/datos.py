@@ -31,13 +31,14 @@ COLUMNAS_FECHA = {
     "compras": ["mes"],
     "devoluciones": ["mes"],
     "envases": ["mes"],
+    "plantilla": ["mes"],
 }
 
 TABLAS = [
     "tiendas", "centros", "flota", "proveedores", "compras",
     "ventas_diarias", "ventas_categoria", "pedidos_online",
     "rutas", "consumo_flota", "energia", "inventario",
-    "residuos", "refrigerantes", "devoluciones", "envases",
+    "residuos", "refrigerantes", "devoluciones", "envases", "plantilla",
     "factores_emision",
 ]
 
@@ -93,6 +94,21 @@ def hay_datos() -> bool:
     return (CARPETA_CSV / "ventas_diarias.csv").exists()
 
 
+#: Otros módulos pueden apuntar aquí sus propias cachés para que se vacíen a
+#: la vez que esta. Es un registro y no un import directo porque `core.datos`
+#: no debe conocer a nadie: si lo conociera, cualquier módulo nuevo podría
+#: crear una importación circular.
+_CACHES_REGISTRADAS: list = []
+
+
+def registrar_cache(limpiador) -> None:
+    """Apunta una función que vacía la caché de otro módulo."""
+    if limpiador not in _CACHES_REGISTRADAS:
+        _CACHES_REGISTRADAS.append(limpiador)
+
+
 def limpiar_cache() -> None:
     """Olvida lo cargado. Útil en pruebas y tras regenerar los datos."""
     cargar.cache_clear()
+    for limpiador in _CACHES_REGISTRADAS:
+        limpiador()

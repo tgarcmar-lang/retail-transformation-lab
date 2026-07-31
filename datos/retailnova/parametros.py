@@ -517,6 +517,48 @@ COSTE_ENVASE_EUR_T = {
 }
 
 # --------------------------------------------------------------------------
+# Plantilla · Sesión 4
+# --------------------------------------------------------------------------
+# Sin dato social, «ESG» es solo la E. Estas cifras existen para que la
+# memoria de sostenibilidad pueda tener las tres dimensiones y para que la
+# matriz de materialidad no salga toda ambiental.
+#
+# Semilla propia (22): añadir esta tabla no mueve ninguna de las anteriores.
+
+#: Empleados por filial. Suman los 5.539 del caso.
+PLANTILLA = {"A": 2_050, "B": 1_340, "C": 900, "D": 690, "E": 559}
+
+#: Proporción de contratos temporales. Madrid y Valencia tiran de refuerzo
+#: en campaña; Bilbao tiene la plantilla más estable.
+TEMPORALIDAD = {"A": 0.24, "B": 0.21, "C": 0.27, "D": 0.23, "E": 0.14}
+
+#: Rotación anual voluntaria.
+ROTACION = {"A": 0.22, "B": 0.19, "C": 0.24, "D": 0.18, "E": 0.11}
+
+#: Accidentes con baja por cada millón de horas trabajadas. Sevilla arrastra
+#: más siniestralidad: flota vieja y más manipulación manual en un solo
+#: centro logístico.
+INDICE_ACCIDENTES = {"A": 21.0, "B": 18.5, "C": 24.0, "D": 29.5, "E": 12.0}
+
+#: Horas de formación por empleado y año.
+HORAS_FORMACION = {"A": 14.0, "B": 16.0, "C": 11.0, "D": 9.5, "E": 21.0}
+
+#: Brecha salarial de género, en puntos porcentuales.
+BRECHA_SALARIAL = {"A": 0.118, "B": 0.104, "C": 0.131, "D": 0.142, "E": 0.061}
+
+#: Mujeres en puestos de dirección.
+MUJERES_DIRECCION = {"A": 0.34, "B": 0.38, "C": 0.29, "D": 0.26, "E": 0.45}
+
+#: Proveedores con evaluación ESG formal. Es bajísimo a propósito: es el
+#: hueco de gobernanza que la Sesión 4 tiene que sacar a la luz.
+PCT_PROVEEDORES_EVALUADOS = {"A": 0.18, "B": 0.14, "C": 0.22, "D": 0.19, "E": 0.31}
+
+#: Países donde el riesgo laboral en la cadena de suministro es alto. Sirve
+#: para el indicador social de cadena de valor (ESRS S2), que es el que
+#: convierte el dilema de Barcelona en un asunto social y no solo ambiental.
+PAISES_RIESGO_LABORAL = ["China", "Bangladés", "Vietnam"]
+
+# --------------------------------------------------------------------------
 # Imperfecciones deliberadas
 # --------------------------------------------------------------------------
 # Un dataset perfecto no enseña nada. Detectar y tratar estos huecos forma

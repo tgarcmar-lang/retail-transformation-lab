@@ -7,7 +7,7 @@ import streamlit as st
 
 from core import datos, filiales, kpis, marca, sesiones
 from modulos import (sesion1_diagnostico, sesion2_descarbonizacion,
-                     sesion3_circular)
+                     sesion3_circular, sesion4_reporting)
 
 st.set_page_config(
     page_title="Retail Transformation Lab",
@@ -92,8 +92,13 @@ with st.sidebar:
             st.session_state["plan3"] = {}
             st.session_state["plan3c"] = {}
             st.session_state["respuestas3"] = {}
+            st.session_state["respuestas4"] = {}
+            st.session_state["seleccion4"] = []
+            st.session_state["declaraciones4"] = {}
             st.session_state["paso3"] = 0
+            st.session_state["paso4"] = 0
             st.session_state.pop("resultado3c", None)
+            st.session_state.pop("evaluacion4", None)
             st.session_state.pop("resultado", None)
             st.session_state.pop("resultado3", None)
             st.session_state["tutor_respuestas"] = {}
@@ -101,7 +106,7 @@ with st.sidebar:
             st.session_state["paso2"] = 0
         st.session_state["grupo"] = grupo
 
-    if st.session_state.get("vista") in ("sesion1", "sesion2", "sesion3"):
+    if st.session_state.get("vista") in ("sesion1", "sesion2", "sesion3", "sesion4"):
         st.divider()
         if st.button("← Volver al inicio", use_container_width=True):
             st.session_state["vista"] = "inicio"
@@ -116,7 +121,7 @@ with st.sidebar:
 
 # ── Contenido principal ──────────────────────────────────────────────────────
 
-if st.session_state.get("vista") in ("sesion1", "sesion2", "sesion3") and grupo:
+if st.session_state.get("vista") in ("sesion1", "sesion2", "sesion3", "sesion4") and grupo:
     filial_actual = filiales.obtener(grupo)
     st.markdown(
         marca.cabecera_compacta(f"{filial_actual.nombre} · Grupo {grupo}"),
@@ -150,6 +155,10 @@ if st.session_state.get("vista") == "sesion2":
 
 if st.session_state.get("vista") == "sesion3":
     sesion3_circular.mostrar(grupo)
+    st.stop()
+
+if st.session_state.get("vista") == "sesion4":
+    sesion4_reporting.mostrar(grupo)
     st.stop()
 
 
@@ -200,7 +209,7 @@ for indice, sesion in enumerate(sesiones.SESIONES):
 
 st.divider()
 
-entrada1, entrada2, entrada3 = st.columns(3)
+entrada1, entrada2, entrada3, entrada4 = st.columns(4)
 if entrada1.button("Entrar en la Sesión 1 · Diagnóstico",
                    type="primary", use_container_width=True):
     st.session_state["vista"] = "sesion1"
@@ -212,4 +221,8 @@ if entrada2.button("Entrar en la Sesión 2 · Descarbonización",
 if entrada3.button("Entrar en la Sesión 3 · Economía circular",
                    use_container_width=True):
     st.session_state["vista"] = "sesion3"
+    st.rerun()
+if entrada4.button("Entrar en la Sesión 4 · Reporting ESG",
+                   use_container_width=True):
+    st.session_state["vista"] = "sesion4"
     st.rerun()

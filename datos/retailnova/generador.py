@@ -916,6 +916,55 @@ def generar_envases(residuos: pd.DataFrame, compras: pd.DataFrame) -> pd.DataFra
     )
 
 
+def generar_plantilla() -> pd.DataFrame:
+    """Datos de plantilla, mes a mes y por filial.
+
+    Existe para que la memoria de sostenibilidad de la Sesión 4 pueda tener
+    dimensión social y no solo ambiental. Las cifras se mueven poco a lo
+    largo del año, salvo la temporalidad, que sube en campaña de Navidad:
+    es el pico que hace visible el indicador.
+
+    Semilla propia (22).
+    """
+    rng = _rng(22)
+    filas = []
+
+    for g in p.GRUPOS:
+        base = p.PLANTILLA[g]
+        for mes in rango_de_meses():
+            # Refuerzo de campaña en noviembre y diciembre.
+            refuerzo = 1.14 if mes.month in (11, 12) else 1.0
+            empleados = int(round(base * refuerzo * rng.normal(1.0, 0.015)))
+            temporal = float(np.clip(
+                rng.normal(p.TEMPORALIDAD[g] * refuerzo, 0.015), 0.05, 0.65
+            ))
+            filas.append({
+                "mes": mes,
+                "grupo": g,
+                "empleados": empleados,
+                "pct_temporales": round(temporal, 4),
+                "pct_rotacion": round(float(np.clip(
+                    rng.normal(p.ROTACION[g] / 12, 0.004), 0.0, 0.2
+                )), 4),
+                "accidentes_con_baja": int(max(0, round(
+                    p.INDICE_ACCIDENTES[g] * empleados * 150 / 1_000_000
+                    * rng.normal(1.0, 0.35)
+                ))),
+                "horas_formacion": round(
+                    p.HORAS_FORMACION[g] / 12 * empleados
+                    * float(rng.normal(1.0, 0.12)), 1
+                ),
+                "pct_mujeres_direccion": round(float(np.clip(
+                    rng.normal(p.MUJERES_DIRECCION[g], 0.02), 0.05, 0.8
+                )), 4),
+                "brecha_salarial": round(float(np.clip(
+                    rng.normal(p.BRECHA_SALARIAL[g], 0.008), 0.0, 0.4
+                )), 4),
+            })
+
+    return pd.DataFrame(filas).sort_values(["mes", "grupo"], ignore_index=True)
+
+
 def generar_factores_emision() -> pd.DataFrame:
     """Tabla de referencia de factores de emisión."""
     return pd.DataFrame(
@@ -948,6 +997,7 @@ def generar_todo(destino: Path = DESTINO) -> dict[str, pd.DataFrame]:
     compras = generar_compras(proveedores)
     devoluciones = generar_devoluciones(pedidos_online)
     envases = generar_envases(residuos, compras)
+    plantilla = generar_plantilla()
     factores = generar_factores_emision()
 
     tablas = {
@@ -967,6 +1017,7 @@ def generar_todo(destino: Path = DESTINO) -> dict[str, pd.DataFrame]:
         "refrigerantes": refrigerantes,
         "devoluciones": devoluciones,
         "envases": envases,
+        "plantilla": plantilla,
         "factores_emision": factores,
     }
 
