@@ -216,10 +216,11 @@ def _paso_material(grupo: str) -> None:
     )
     _respuesta(
         "material_o_carbono",
-        "¿Alguna de aquellas decisiones cambia también el material que "
-        "movéis? ¿Cuál, y en qué sentido?",
+        "De esas palancas, ¿alguna cambia además la cantidad de envase o de "
+        "residuo que genera vuestra filial? ¿Cuál, y por qué?",
         grupo,
-        ayuda="Pista: mirad la que tocaba el reparto a domicilio.",
+        ayuda="Pensad qué le pasa a la caja de cartón cuando un pedido se "
+              "recoge en la tienda en vez de repartirse a domicilio.",
         alto=90,
     )
 

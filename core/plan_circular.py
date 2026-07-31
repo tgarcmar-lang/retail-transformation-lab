@@ -14,8 +14,8 @@ from core import circular, filiales, informe, kpis
 
 PREGUNTAS = {
     "plan_previo": "¿Qué palancas elegisteis en la Sesión 2 y por qué?",
-    "material_o_carbono": "¿Alguna de aquellas decisiones cambia también el "
-                          "material que movéis?",
+    "material_o_carbono": "¿Alguna de aquellas palancas cambia además la "
+                          "cantidad de envase o de residuo que generáis?",
     "escalon": "¿En qué escalón de la jerarquía están las palancas más "
                "baratas, y en cuál las que más material recuperan?",
     "justificacion": "¿Por qué este plan y no otro? ¿Qué habéis dejado fuera?",
