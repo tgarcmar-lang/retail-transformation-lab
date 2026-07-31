@@ -32,6 +32,8 @@ Valida contenido, KPIs y sentido pedagógico. No le pidas revisar código.
   indicadores, memoria de sostenibilidad verificada).
 - Sesión 5: Ejecución del plan con métodos ágiles (backlog, sprints,
   capacidad, contratiempos y enfoque híbrido).
+- Sesión 6: Seguimiento con Kanban y enfoques híbridos (límite de trabajo en
+  curso, ley de Little, flujo acumulado).
 - Asistente de IA que comenta resultados y plantea preguntas.
 - Panel del profesor para comparar los cinco grupos.
 
@@ -39,7 +41,7 @@ Valida contenido, KPIs y sentido pedagógico. No le pidas revisar código.
 Control Tower · Digital Twin · Robotics Studio · Telecommunications Studio ·
 Agentes multi-rol · Módulo de Dirección de Proyectos · Gestión del Cambio ·
 Comité de Dirección virtual · Otros sectores · Modo Desarrollador ·
-Sesiones 6 y 7
+Sesión 7
 
 Si el usuario pide algo de esta lista, recuérdale que está pospuesto, no descartado.
 La inflación de alcance es el principal riesgo de este proyecto.
@@ -49,8 +51,7 @@ decisión expresa de Tomás**, que levantó la restricción para cubrir dos
 competencias del programa: logística verde y economía circular, y medición y
 reporting ESG. En los dos casos se le recordó la decisión vinculante del 29
 de julio y la mantuvo. Queda constancia en el registro de decisiones. **Las
-sesiones 6 y 7 están comprometidas** (Kanban e híbridos la 6, gestión del
-cambio la 7) y pendientes de construir.
+sesión 7 está comprometida** (gestión del cambio) y pendiente de construir.
 
 ## Decisiones técnicas cerradas
 
@@ -130,7 +131,10 @@ sesión se reenvía el HTML en cada clic, así que allí va el pequeño.
 - [x] **Sesión 5 · Ejecución del plan (31 jul 2026).** Backlog derivado de
       las palancas, seis sprints con capacidad insuficiente, dependencias y
       diez contratiempos fijos. Guion del profesor incluido.
-      **1.413 pruebas en verde.**
+- [x] **Sesión 6 · Seguimiento con Kanban (31 jul 2026).** Tablero de cuatro
+      columnas, límite de trabajo en curso con óptimo distinto por filial,
+      ley de Little comprobada y sistema híbrido. Guion del profesor
+      incluido. **1.647 pruebas en verde.**
 
 ### Siguiente
 - [ ] Demo con alumnos en los próximos días. Después, afinar con lo que se
@@ -138,10 +142,14 @@ sesión se reenvía el HTML en cada clic, así que allí va el pequeño.
 - [ ] **Sin validar por Tomás:** los factores del alcance 3 (Sesión 2) y los
       del modelo circular (Sesión 3). Son calibraciones mías, verosímiles
       pero no contrastadas contra ninguna base publicada.
-- [ ] **Sesión 6 (Kanban y enfoques híbridos) y Sesión 7 (gestión del
-      cambio).** Comprometidas con Tomás el 31 de julio, sin construir.
-- [ ] **Sin cronometrar:** ninguna de las cinco sesiones se ha probado con
-      alumnos. Las cinco están planificadas a 90 minutos sobre el papel.
+- [ ] **Sesión 7 (gestión del cambio).** Comprometida con Tomás el 31 de
+      julio, sin construir. Es la más distinta de todas: no va de números
+      sino de personas, y merece una conversación de diseño antes de
+      escribir nada.
+- [ ] **Demo con alumnos la semana del 3 de agosto.** Tomás la realiza y
+      después informa. Es la primera vez que alguien de fuera toca esto.
+- [ ] **Sin cronometrar:** ninguna de las seis sesiones se ha probado con
+      alumnos. Las seis están planificadas a 90 minutos sobre el papel.
 - [ ] **Caduca solo:** el contenido normativo de la Sesión 4 (CSRD, ESRS,
       SBTi). Verificar antes de cada curso. Es lo único del proyecto que se
       queda obsoleto sin que nadie toque nada.
@@ -500,6 +508,77 @@ los dos es un fallo, y los dos consumen capacidad.
 Está cacheado con `lru_cache` y registrado en `core.datos.registrar_cache`,
 igual que la matriz de materialidad de la Sesión 4.
 
+## Sesión 6 · cómo está montada
+
+Cuatro pasos. La Sesión 5 repartía el trabajo en cajas de tiempo; esta lo
+deja fluir y se ocupa de **seguirlo**.
+
+1. **El tablero** — cuatro columnas, y la que importa es «Bloqueado»
+2. **El límite de trabajo en curso** — el experimento que da la vuelta a la
+   intuición
+3. **El sistema híbrido** — qué va al tablero y qué se compromete con fecha
+4. **El seguimiento** — flujo acumulado, tiempo de ciclo e informe
+
+Vive en `core/kanban.py`, y el documento en `core/informe_seguimiento.py`.
+Reutiliza el backlog y la capacidad de la Sesión 5: es el mismo proyecto
+mirado con otra lente, y la capacidad semanal es la mitad de la del sprint.
+
+### La idea, que tiene dos mitades contradictorias
+
+**Abrir más cosas no termina más cosas.** La capacidad se reparte y la
+multitarea cuesta un 7 % de eficiencia por tarea abierta de más.
+
+**Pero el mínimo tampoco es la respuesta**, y esto es lo que casi ningún
+curso de Kanban dice. Toda iniciativa espera a un tercero cuando se abre —dos
+semanas las obras, una los programas— y mientras espera **ocupa un hueco del
+tablero**. Con una sola tarea abierta, el equipo se para. Con WIP 1 las cinco
+filiales entregan 3 iniciativas de 14.
+
+**El óptimo está en medio y no es el mismo en todas.** Hay prueba que impide
+que caiga en cualquiera de los dos extremos.
+
+| Filial | Óptimo | Capacidad semanal | WIP 1 | Óptimo | WIP 10 |
+|---|---|---|---|---|---|
+| A · Madrid | 4 | 12,45 | 13 de 40 | 23 | 13 |
+| B · Barcelona | 5 | 8,40 | 10 de 39 | 23 | 10 |
+| C · Valencia | 3 | 6,65 | 12 de 45 | 21 | **2** |
+| D · Sevilla | 3 | 5,05 | 11 de 43 | 19 | 7 |
+| E · Bilbao | 5 | 3,50 | 9 de 33 | 18 | 7 |
+
+En Madrid y Barcelona **los dos extremos entregan lo mismo** por motivos
+opuestos: es la campana perfecta. Valencia es el caso extremo: con diez
+tareas abiertas entrega 2 puntos de valor de 45 con el equipo trabajando a
+tope las doce semanas.
+
+### La ley de Little
+
+Tiempo de ciclo = trabajo en curso ÷ ritmo de entrega. Se comprueba sobre los
+propios números del ejercicio y **cuadra con un 6-15 % de desviación en el
+óptimo** de cada filial. Donde se desvía es porque el sistema no está en
+régimen estable: al terminar las doce semanas quedan tareas abiertas, y el
+módulo lo dice en voz alta. Saber cuándo no se aplica una herramienta vale
+tanto como saber usarla.
+
+### El sistema híbrido
+
+Es la parte que conecta con la competencia del temario. El grupo reparte su
+backlog entre lo que va al tablero y lo que se compromete con fecha, y cada
+mitad se mide con un indicador distinto: tiempo de ciclo una, puntualidad la
+otra. La aplicación detecta los dos errores:
+
+- **Obras en el tablero de flujo**: esperan al proveedor ocupando un hueco de
+  WIP y no ganan nada, porque su fecha ya estaba comprometida con un tercero.
+- **Fecha sobre lo iterativo**: se compromete una cifra que nadie puede saber
+  y que después todos repiten en el comité.
+
+### Por qué el bloqueo se dispara al abrir la tarea
+
+La primera versión bloqueaba las tareas al llegar a cierto porcentaje de
+avance, y no funcionaba: las tareas pequeñas terminaban antes de llegar a su
+punto de espera, así que nunca se bloqueaban y **WIP 1 salía óptimo en dos
+filiales**. Moverlo a la entrada lo arregló y además es más realista: se abre
+la tarea, se descubre que hace falta un presupuesto o un permiso, y se espera.
+
 ## El tutor de guardia
 
 Vive en `core/tutor.py`. Lee lo que ha escrito el grupo y devuelve **una
@@ -751,3 +830,19 @@ inverosímil.
 - **2026-07-31** — La clasificación predictivo/iterativo está **escrita y
   razonada**, no deducida de los datos. Es el contenido de la sesión: una obra
   es predictiva aunque la haga una empresa muy ágil.
+- **2026-07-31** — La Sesión 6 **reutiliza el backlog de la Sesión 5** en vez
+  de crear uno propio. Es el mismo proyecto con otra lente, y eso permite
+  comparar las dos formas de gestionarlo sin que el alumno tenga que
+  aprenderse un caso nuevo a mitad de curso.
+- **2026-07-31** — El bloqueo de las tareas se dispara **al abrirlas** y no
+  al llegar a un porcentaje de avance. Con la primera versión las tareas
+  pequeñas terminaban antes de bloquearse, el equipo nunca se quedaba parado
+  y el óptimo de WIP caía en 1 en dos filiales, que es justo la
+  simplificación falsa que la sesión quiere desmontar.
+- **2026-07-31** — El óptimo de WIP **no puede caer en los extremos**, y hay
+  prueba que lo vigila en las cinco filiales. Si cayera en el mínimo, la
+  lección sería «haz una cosa cada vez», que es falso y además inaplicable.
+- **2026-07-31** — La ley de Little se presenta **con su desviación a la
+  vista** en lugar de forzar el modelo para que cuadre. Que no encaje del
+  todo es información: el sistema no está estable, y decirlo enseña más que
+  ocultarlo.

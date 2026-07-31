@@ -51,9 +51,9 @@ SESIONES: list[Sesion] = [
     ),
     Sesion(
         numero=6,
-        titulo="Gestión del cambio",
-        objetivo="Implantar el proyecto y gestionar los conflictos que aparecen.",
-        disponible=False,
+        titulo="Seguimiento del proyecto",
+        objetivo="Kanban, límite de trabajo en curso y enfoques híbridos.",
+        disponible=True,
     ),
     Sesion(
         numero=7,
