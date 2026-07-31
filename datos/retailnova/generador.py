@@ -799,6 +799,123 @@ def generar_compras(proveedores: pd.DataFrame) -> pd.DataFrame:
     )
 
 
+def generar_devoluciones(pedidos_online: pd.DataFrame) -> pd.DataFrame:
+    """Devoluciones del canal online, mes a mes y por categoría.
+
+    Se derivan de los pedidos que ya existen, no se inventan por separado:
+    así es imposible que una filial devuelva más de lo que vendió. Lo que no
+    es revendible se convierte en residuo, y ese residuo ya está contado
+    dentro de `residuos.csv`.
+
+    Semilla propia (20): añadir esta tabla no mueve ninguna de las anteriores.
+    """
+    rng = _rng(20)
+    filas = []
+
+    for g in p.GRUPOS:
+        propios = pedidos_online[pedidos_online["grupo"] == g].copy()
+        propios["mes"] = propios["fecha"].dt.to_period("M").dt.to_timestamp()
+        mensual = propios.groupby("mes").agg(
+            pedidos=("pedidos", "sum"),
+            **{f"ventas_{c}_eur": (f"ventas_{c}_eur", "sum") for c in p.CATEGORIAS},
+        )
+
+        for mes, fila in mensual.iterrows():
+            ventas_mes = sum(float(fila[f"ventas_{c}_eur"]) for c in p.CATEGORIAS)
+            if ventas_mes <= 0:
+                continue
+            for categoria in p.CATEGORIAS:
+                ventas_cat = float(fila[f"ventas_{categoria}_eur"])
+                if ventas_cat <= 0:
+                    continue
+                # Los pedidos de la categoría, repartidos según lo que pesa
+                # en la venta del mes.
+                pedidos_cat = float(fila["pedidos"]) * ventas_cat / ventas_mes
+                tasa = float(np.clip(
+                    rng.normal(p.TASA_DEVOLUCION[categoria], 0.02), 0.005, 0.55
+                ))
+                devueltos = pedidos_cat * tasa
+                revendible = float(np.clip(
+                    rng.normal(p.PCT_REVENDIBLE[categoria], 0.04), 0.0, 0.95
+                ))
+                kg = devueltos * p.KG_POR_DEVOLUCION[categoria]
+
+                filas.append({
+                    "mes": mes.date(),
+                    "grupo": g,
+                    "categoria": categoria,
+                    "pedidos_devueltos": int(round(devueltos)),
+                    "tasa_devolucion": round(tasa, 4),
+                    "valor_eur": round(ventas_cat * tasa, 2),
+                    "peso_kg": round(kg, 1),
+                    "pct_revendible": round(revendible, 3),
+                    "peso_no_revendible_kg": round(kg * (1 - revendible), 1),
+                    "coste_gestion_eur": round(
+                        devueltos * p.COSTE_GESTION_DEVOLUCION_EUR, 2
+                    ),
+                })
+
+    return pd.DataFrame(filas).sort_values(
+        ["mes", "grupo", "categoria"], ignore_index=True
+    )
+
+
+def generar_envases(residuos: pd.DataFrame, compras: pd.DataFrame) -> pd.DataFrame:
+    """Envases y embalajes puestos en circulación, por tipo.
+
+    Se calibra contra el cartón y el plástico que ya recoge `residuos.csv`,
+    de modo que las dos tablas cuentan lo mismo desde dos ángulos: una, lo
+    que se tira; otra, lo que se compró para embalar y de dónde venía.
+
+    El sobreembalaje de origen es lo que hace que Barcelona, que compra la
+    mitad en Asia, arrastre más envase por euro vendido que nadie.
+
+    Semilla propia (21).
+    """
+    rng = _rng(21)
+    filas = []
+
+    for g in p.GRUPOS:
+        residuo_g = residuos[residuos["grupo"] == g].copy()
+        mensual = residuo_g.groupby("mes")[["carton_kg", "plastico_kg"]].sum()
+
+        compras_g = compras[compras["grupo"] == g]
+        importe = float(compras_g["importe_eur"].sum())
+        if importe > 0:
+            sobre = float(sum(
+                compras_g[compras_g["pais_origen"] == origen]["importe_eur"].sum()
+                / importe * factor
+                for origen, factor in p.SOBREEMBALAJE_ORIGEN.items()
+            ))
+        else:
+            sobre = 1.0
+
+        for mes, fila in mensual.iterrows():
+            # El envase puesto en circulación es algo más que el residuo
+            # recogido: parte se queda en casa del cliente.
+            base_kg = (float(fila["carton_kg"]) + float(fila["plastico_kg"])) * 1.18
+            for tipo, peso in p.MIX_ENVASE.items():
+                # El sobreembalaje solo afecta a lo que entra, no a lo que
+                # se prepara aquí para el cliente.
+                factor = sobre if tipo in ("carton_entrada", "film_plastico",
+                                           "palet_madera") else 1.0
+                kg = base_kg * peso * factor * float(
+                    np.clip(rng.normal(1.0, 0.05), 0.8, 1.2)
+                )
+                filas.append({
+                    "mes": mes,
+                    "grupo": g,
+                    "tipo": tipo,
+                    "kg": round(kg, 1),
+                    "retornable": False,
+                    "coste_eur": round(kg / 1_000 * p.COSTE_ENVASE_EUR_T[tipo], 2),
+                })
+
+    return pd.DataFrame(filas).sort_values(
+        ["mes", "grupo", "tipo"], ignore_index=True
+    )
+
+
 def generar_factores_emision() -> pd.DataFrame:
     """Tabla de referencia de factores de emisión."""
     return pd.DataFrame(
@@ -829,6 +946,8 @@ def generar_todo(destino: Path = DESTINO) -> dict[str, pd.DataFrame]:
     residuos = generar_residuos(tiendas, centros, ventas_categoria)
     refrigerantes = generar_refrigerantes(tiendas)
     compras = generar_compras(proveedores)
+    devoluciones = generar_devoluciones(pedidos_online)
+    envases = generar_envases(residuos, compras)
     factores = generar_factores_emision()
 
     tablas = {
@@ -846,6 +965,8 @@ def generar_todo(destino: Path = DESTINO) -> dict[str, pd.DataFrame]:
         "inventario": inventario,
         "residuos": residuos,
         "refrigerantes": refrigerantes,
+        "devoluciones": devoluciones,
+        "envases": envases,
         "factores_emision": factores,
     }
 

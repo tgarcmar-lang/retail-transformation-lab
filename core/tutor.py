@@ -126,6 +126,28 @@ RESERVA = {
         "¿Qué tendría que ganar ese proveedor para querer moverse?",
         "Si el proveedor os dice que no, ¿qué os queda?",
     ],
+    "s3_escalon": [
+        "La palanca más barata que tenéis, ¿en qué escalón de la jerarquía "
+        "está? ¿Y por qué creéis que es la más barata?",
+        "Si solo hicierais lo más barato, ¿hasta dónde llegaríais?",
+        "¿Qué tiene que pasar para que una tonelada reciclada valga menos que "
+        "una tonelada que nunca se generó?",
+    ],
+    "s3_prevencion": [
+        "De vuestro plan, ¿qué parte deja de generar residuo y qué parte solo "
+        "lo coloca en otro contenedor?",
+        "Si el año que viene os piden otro tercio, ¿desde dónde partiríais "
+        "con el plan que acabáis de hacer?",
+        "¿Hay algo en vuestro plan que además os ahorre dinero desde el "
+        "primer día?",
+    ],
+    "s3_euros": [
+        "Habéis ordenado por toneladas. Si ordenaseis por euros ahorrados, "
+        "¿cambiaría el primer puesto?",
+        "¿Qué medida defenderíais aunque no recuperase ni una tonelada?",
+        "El Consejo os pregunta cuándo se recupera la inversión. ¿Qué "
+        "contestáis?",
+    ],
     "propuesta": [
         "Vuestra propuesta, ¿ataca la causa que habéis identificado o ataca "
         "otro problema distinto?",

@@ -449,6 +449,74 @@ FACTOR_RESIDUO_VERTEDERO = 0.45
 FACTOR_RESIDUO_RECICLADO = 0.021
 
 # --------------------------------------------------------------------------
+# Economía circular · Sesión 3
+# --------------------------------------------------------------------------
+# Las dos tablas nuevas se derivan de las que ya existen: las devoluciones,
+# de `pedidos_online.csv`; los envases, del cartón y el plástico que ya
+# aparecen en `residuos.csv`. Se hace así para que no puedan contradecirse.
+# Cada una usa su propia semilla, de modo que añadirlas no mueve ni un byte
+# de los CSV anteriores.
+
+#: Proporción de pedidos que se devuelven, por categoría. La moda devuelve
+#: mucho —tallas, color, comprar tres para quedarse uno— y la alimentación
+#: casi nada.
+TASA_DEVOLUCION = {
+    "moda_belleza": 0.28,
+    "hogar_electronica": 0.11,
+    "alimentacion_hosteleria": 0.02,
+}
+
+#: Qué parte de lo devuelto puede volver a venderse como nuevo. El resto se
+#: liquida por debajo de coste o se destruye: es residuo con etiqueta.
+PCT_REVENDIBLE = {
+    "moda_belleza": 0.72,
+    "hogar_electronica": 0.80,
+    "alimentacion_hosteleria": 0.05,
+}
+
+#: Peso medio de un pedido devuelto, en kilos.
+KG_POR_DEVOLUCION = {
+    "moda_belleza": 0.9,
+    "hogar_electronica": 2.4,
+    "alimentacion_hosteleria": 3.5,
+}
+
+#: Lo que cuesta gestionar una devolución: recogerla, inspeccionarla y
+#: devolverla al stock o darla de baja.
+COSTE_GESTION_DEVOLUCION_EUR = 4.80
+
+#: Tipos de envase que se siguen. `retornable` indica si hoy ya circula en
+#: circuito cerrado; en el caso de partida, ninguno lo hace.
+TIPOS_ENVASE = [
+    "carton_entrada", "carton_salida", "film_plastico",
+    "relleno_plastico", "palet_madera",
+]
+
+#: Reparto del envase entre tipos. La entrada pesa más que la salida: una
+#: tonelada de mercancía viene mucho más protegida que un pedido suelto.
+MIX_ENVASE = {
+    "carton_entrada": 0.38,
+    "carton_salida": 0.24,
+    "film_plastico": 0.14,
+    "relleno_plastico": 0.09,
+    "palet_madera": 0.15,
+}
+
+#: Sobreembalaje según de dónde venga la mercancía. Un contenedor que cruza
+#: medio mundo viene mucho más protegido que un camión desde Portugal. Es lo
+#: que convierte el envase en el problema de Barcelona.
+SOBREEMBALAJE_ORIGEN = {
+    "España": 1.00, "Portugal": 1.00, "Italia": 1.05, "Turquía": 1.15,
+    "China": 1.35, "Bangladés": 1.35, "Vietnam": 1.35,
+}
+
+#: Coste del envase por tonelada puesta en circulación, por tipo.
+COSTE_ENVASE_EUR_T = {
+    "carton_entrada": 620.0, "carton_salida": 780.0, "film_plastico": 1_450.0,
+    "relleno_plastico": 1_900.0, "palet_madera": 340.0,
+}
+
+# --------------------------------------------------------------------------
 # Imperfecciones deliberadas
 # --------------------------------------------------------------------------
 # Un dataset perfecto no enseña nada. Detectar y tratar estos huecos forma

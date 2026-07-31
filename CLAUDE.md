@@ -26,6 +26,8 @@ Valida contenido, KPIs y sentido pedagógico. No le pidas revisar código.
 - RetailNova Europa con 5 filiales: Madrid, Barcelona, Valencia, Sevilla, Bilbao.
 - Sesión 1: Diagnóstico (explorar la empresa, KPIs, informe).
 - Sesión 2: Descarbonización (huella de carbono, simulación, plan de acción).
+- Sesión 3: Logística verde y economía circular (balance de materiales,
+  jerarquía de residuos, plan de circularidad).
 - Asistente de IA que comenta resultados y plantea preguntas.
 - Panel del profesor para comparar los cinco grupos.
 
@@ -33,10 +35,15 @@ Valida contenido, KPIs y sentido pedagógico. No le pidas revisar código.
 Control Tower · Digital Twin · Robotics Studio · Telecommunications Studio ·
 Agentes multi-rol · Módulo de Dirección de Proyectos · Gestión del Cambio ·
 Comité de Dirección virtual · Otros sectores · Modo Desarrollador ·
-Sesiones 3 a 7
+Sesiones 4 a 7
 
 Si el usuario pide algo de esta lista, recuérdale que está pospuesto, no descartado.
 La inflación de alcance es el principal riesgo de este proyecto.
+
+**La Sesión 3 salió de esta lista el 31 de julio de 2026 por decisión expresa
+de Tomás**, que levantó la restricción para poder cubrir la competencia de
+logística verde y economía circular del programa. Queda constancia en el
+registro de decisiones. Las sesiones 4 a 7 siguen bloqueadas.
 
 ## Decisiones técnicas cerradas
 
@@ -104,13 +111,21 @@ sesión se reenvía el HTML en cada clic, así que allí va el pequeño.
 - [x] Sesión 2 · Descarbonización: simulador de palancas con presupuesto y
       plan descargable
 - [x] **Ampliación de la Sesión 2 (30 jul 2026): transporte desagregado y
-      alcance 3.** Vía A, doble objetivo. 738 pruebas en verde.
+      alcance 3.** Vía A, doble objetivo.
+- [x] Guion del profesor de la Sesión 2 — fuera del repositorio
+- [x] **Sesión 3 · Logística verde y economía circular (31 jul 2026).**
+      Balance de materiales, jerarquía de residuos, seis palancas y plan
+      descargable. Dos tablas de datos nuevas. Guion del profesor incluido.
+      **985 pruebas en verde.**
 
 ### Siguiente
 - [ ] Demo con alumnos en los próximos días. Después, afinar con lo que se
       vea.
-- [ ] Afinar las dos sesiones con lo que se aprenda en la clase del 8 de
-      septiembre.
+- [ ] **Sin validar por Tomás:** los factores del alcance 3 (Sesión 2) y los
+      del modelo circular (Sesión 3). Son calibraciones mías, verosímiles
+      pero no contrastadas contra ninguna base publicada.
+- [ ] **Sin cronometrar:** ninguna de las tres sesiones se ha probado con
+      alumnos. Las tres están planificadas a 90 minutos sobre el papel.
 
 ## La ampliación de la Sesión 2 (hecha el 30 jul 2026)
 
@@ -226,6 +241,73 @@ rompe eso, `tests/test_palancas.py` lo detecta.
 suministro se queda por debajo de la mitad de su objetivo. Las dos están
 verificadas por pruebas y las dos se avisan en pantalla, pero solo después
 de que lo intenten.
+
+## Sesión 3 · cómo está montada
+
+Cuatro pasos, misma mecánica que la Sesión 2. Mide **material**, no carbono, y
+eso cambia la lógica: el carbono se evita gastando en tecnología; el material
+se evita, sobre todo, no llegando a usarlo.
+
+1. **Qué material movéis** — balance de materiales y jerarquía de residuos
+2. **Vuestras palancas** — las seis, ordenadas por coste por tonelada
+3. **Vuestro plan** — simulador con presupuesto y plan descargable
+4. **La cuenta en euros** — lo mismo con la otra unidad de medida
+
+**Objetivo: recuperar un tercio del material que hoy se pierde.
+Presupuesto: 0,8 % de las ventas** a tres años. Vive en `core/circular.py`.
+
+### La idea que sostiene la sesión
+
+`FACTOR_RECICLAJE = 0.55`: de cada tonelada que se manda a reciclar solo
+vuelve al ciclo algo más de la mitad. Se pierde en la recogida, en la limpieza
+y en la transformación, y lo que sale vale para menos cosas. Por eso la
+métrica no es «cuánto reciclas» sino **cuánto material se pierde de verdad**,
+y por eso las filiales que reciclan mucho descubren que recirculan poco:
+Bilbao recicla el 84 % y recircula el 46 %.
+
+**Reciclar es la palanca más barata en las cinco filiales (1.091 €/t) y en las
+cinco es insuficiente:** al máximo posible recupera entre el 4 % y el 14 % de
+la pérdida, contra un objetivo del 33 %. Hay prueba que lo fija en las cinco.
+
+### Las seis palancas, por escalón
+
+| Palanca | Escalón | Precio | Papel |
+|---|---|---|---|
+| `segregacion` | Reciclar | 1.091 €/t | La más barata y la que menos llega. Techo de 15 puntos y máximo del 88 % |
+| `embalaje` | Prevenir | 1.683–2.504 €/t | La mayor bolsa de material en cuatro de las cinco filiales |
+| `retornable` | Reutilizar | 1.798–3.720 €/t | **Sevilla la tiene más barata**: sus camiones ya vuelven vacíos |
+| `merma` | Prevenir | 2.064–2.694 €/t | **La de Valencia**: 1.056 t y 4,46 M€ al año |
+| `reacondicionado` | Reutilizar | 4.644–6.062 €/t | Convierte residuo en ingreso, pero es intensiva en mano de obra |
+| `devoluciones` | Prevenir | 4.261–8.617 €/t | La peor en toneladas y de las mejores en euros |
+
+**Calibración:** con el mejor plan las filiales llegan al 35,5–45,2 % contra
+un objetivo del 33 %. Ninguna palanca suelta resuelve la sesión en ninguna
+filial, y sin ninguna palanca de prevención no se llega ni gastándolo todo.
+
+| Filial | Su palanca | Por qué |
+|---|---|---|
+| A · Madrid | Envase, y devoluciones en euros | 336.017 devoluciones al año le cuestan 1,61 M€ de gestión |
+| B · Barcelona | Envase | Mayor sobreembalaje del grupo (×1,185): la cadena asiática otra vez |
+| C · Valencia | Merma | Única filial donde la merma pesa más que el envase |
+| D · Sevilla | Envase retornable | El 34 % de vacío paga el circuito de retorno. Logística verde y circular se tocan |
+| E · Bilbao | Ninguna barata | Ya recicla el 84 %: solo le quedan 4 puntos frente a los 15 de los demás |
+
+### Las dos trampas
+
+1. **Resolverlo reciclando.** Es lo primero que intentan todos porque es lo
+   más barato. La interfaz les avisa cuando su plan está casi todo en los
+   escalones de abajo, pero solo después de haberlo montado.
+2. **Descartar las devoluciones por caras.** La tabla del paso 2 invita a
+   ello; el paso 4 enseña lo que cuestan hoy en dinero. Por eso el paso 4 va
+   al final, igual que el alcance 3 en la Sesión 2.
+
+### Los datos nuevos
+
+`devoluciones.csv` y `envases.csv`, con semillas propias (20 y 21). Se derivan
+de tablas existentes —las devoluciones de `pedidos_online.csv`, los envases
+del cartón y el plástico de `residuos.csv`— para que no puedan contradecirse.
+**Los quince CSV anteriores quedaron idénticos byte a byte**, comprobado con
+`md5sum`, así que no se movió ninguna cifra de los guiones ya impresos.
 
 ## El tutor de guardia
 
@@ -408,3 +490,27 @@ inverosímil.
   generador, no a mano en el CSV. Regenerar solo cambió `factores_emision.csv`;
   el resto quedó idéntico byte a byte (comprobado con `md5sum`), así que las
   cifras que ya conocía Tomás no se movieron.
+- **2026-07-31** — **Levantada la restricción sobre la Sesión 3.** Decisión
+  expresa de Tomás, que necesitaba cubrir la competencia de logística verde y
+  economía circular del programa. Se le recordó la decisión vinculante del 29
+  de julio y la mantuvo. Las sesiones 4 a 7 siguen bloqueadas.
+- **2026-07-31** — La Sesión 3 mide **material** y no carbono, con un factor
+  de recirculación del 0,55 para el reciclaje. Sin ese factor, reciclar
+  equivaldría a prevenir y la jerarquía de residuos —que es el contenido de
+  la sesión— no tendría ninguna consecuencia numérica.
+- **2026-07-31** — El objetivo se fija sobre **la pérdida de material** y no
+  sobre el residuo generado ni sobre la tasa de reciclaje. Sobre el residuo
+  generado, reciclar no serviría de nada; sobre la tasa de reciclaje, la
+  sesión premiaría justo lo que quiere cuestionar.
+- **2026-07-31** — `segregacion` se dejó siendo **la palanca más barata a
+  propósito**. Era tentador encarecerla para que nadie la eligiera primero,
+  pero eso habría falseado el caso: en la realidad reciclar es lo más barato,
+  y el aprendizaje está en descubrir que aun así no basta.
+- **2026-07-31** — Las dos tablas nuevas se **derivan de las existentes** en
+  vez de generarse por separado, y con semillas propias (20 y 21). Así una
+  filial no puede devolver más de lo que vendió, el envase no puede
+  contradecir al residuo recogido, y los quince CSV anteriores no se mueven.
+- **2026-07-31** — El paso de los euros va **al final**, como el alcance 3 en
+  la Sesión 2. Es la misma estructura deliberada: decidir con una unidad,
+  comprometerse por escrito y después descubrir que la otra unidad ordena las
+  cosas de otra manera.

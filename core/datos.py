@@ -29,13 +29,16 @@ COLUMNAS_FECHA = {
     "inventario": ["mes"],
     "residuos": ["mes"],
     "compras": ["mes"],
+    "devoluciones": ["mes"],
+    "envases": ["mes"],
 }
 
 TABLAS = [
     "tiendas", "centros", "flota", "proveedores", "compras",
     "ventas_diarias", "ventas_categoria", "pedidos_online",
     "rutas", "consumo_flota", "energia", "inventario",
-    "residuos", "refrigerantes", "factores_emision",
+    "residuos", "refrigerantes", "devoluciones", "envases",
+    "factores_emision",
 ]
 
 

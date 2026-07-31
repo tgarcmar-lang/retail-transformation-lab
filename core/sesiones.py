@@ -32,8 +32,9 @@ SESIONES: list[Sesion] = [
     Sesion(
         numero=3,
         titulo="Economía circular",
-        objetivo="Envases, residuos, retornos y logística inversa.",
-        disponible=False,
+        objetivo="Recuperar el material que hoy se pierde: envases, merma y "
+                 "devoluciones.",
+        disponible=True,
     ),
     Sesion(
         numero=4,
