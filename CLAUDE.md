@@ -30,6 +30,8 @@ Valida contenido, KPIs y sentido pedagógico. No le pidas revisar código.
   jerarquía de residuos, plan de circularidad).
 - Sesión 4: Medición, reporting y estrategia ESG (doble materialidad,
   indicadores, memoria de sostenibilidad verificada).
+- Sesión 5: Ejecución del plan con métodos ágiles (backlog, sprints,
+  capacidad, contratiempos y enfoque híbrido).
 - Asistente de IA que comenta resultados y plantea preguntas.
 - Panel del profesor para comparar los cinco grupos.
 
@@ -37,7 +39,7 @@ Valida contenido, KPIs y sentido pedagógico. No le pidas revisar código.
 Control Tower · Digital Twin · Robotics Studio · Telecommunications Studio ·
 Agentes multi-rol · Módulo de Dirección de Proyectos · Gestión del Cambio ·
 Comité de Dirección virtual · Otros sectores · Modo Desarrollador ·
-Sesiones 5 a 7
+Sesiones 6 y 7
 
 Si el usuario pide algo de esta lista, recuérdale que está pospuesto, no descartado.
 La inflación de alcance es el principal riesgo de este proyecto.
@@ -47,7 +49,8 @@ decisión expresa de Tomás**, que levantó la restricción para cubrir dos
 competencias del programa: logística verde y economía circular, y medición y
 reporting ESG. En los dos casos se le recordó la decisión vinculante del 29
 de julio y la mantuvo. Queda constancia en el registro de decisiones. **Las
-sesiones 5 a 7 siguen bloqueadas.**
+sesiones 6 y 7 están comprometidas** (Kanban e híbridos la 6, gestión del
+cambio la 7) y pendientes de construir.
 
 ## Decisiones técnicas cerradas
 
@@ -124,7 +127,10 @@ sesión se reenvía el HTML en cada clic, así que allí va el pequeño.
       Doble materialidad calculada desde los datos, catálogo de 25
       indicadores con su estándar, cinco tentaciones de greenwashing y
       memoria verificada. Datos sociales nuevos. Guion del profesor incluido.
-      **1.169 pruebas en verde.**
+- [x] **Sesión 5 · Ejecución del plan (31 jul 2026).** Backlog derivado de
+      las palancas, seis sprints con capacidad insuficiente, dependencias y
+      diez contratiempos fijos. Guion del profesor incluido.
+      **1.413 pruebas en verde.**
 
 ### Siguiente
 - [ ] Demo con alumnos en los próximos días. Después, afinar con lo que se
@@ -132,8 +138,10 @@ sesión se reenvía el HTML en cada clic, así que allí va el pequeño.
 - [ ] **Sin validar por Tomás:** los factores del alcance 3 (Sesión 2) y los
       del modelo circular (Sesión 3). Son calibraciones mías, verosímiles
       pero no contrastadas contra ninguna base publicada.
-- [ ] **Sin cronometrar:** ninguna de las cuatro sesiones se ha probado con
-      alumnos. Las cuatro están planificadas a 90 minutos sobre el papel.
+- [ ] **Sesión 6 (Kanban y enfoques híbridos) y Sesión 7 (gestión del
+      cambio).** Comprometidas con Tomás el 31 de julio, sin construir.
+- [ ] **Sin cronometrar:** ninguna de las cinco sesiones se ha probado con
+      alumnos. Las cinco están planificadas a 90 minutos sobre el papel.
 - [ ] **Caduca solo:** el contenido normativo de la Sesión 4 (CSRD, ESRS,
       SBTi). Verificar antes de cada curso. Es lo único del proyecto que se
       queda obsoleto sin que nadie toque nada.
@@ -416,6 +424,82 @@ segundo. Está cacheada con `lru_cache`, y `core.datos.registrar_cache` permite
 que `limpiar_cache()` la vacíe junto con las demás sin crear importaciones
 circulares. Sin esa caché, la suite de pruebas no terminaba.
 
+## Sesión 5 · cómo está montada
+
+Cuatro pasos. La mecánica vuelve a cambiar: aquí no se decide **qué** hacer
+—eso está decidido en las sesiones 2, 3 y 4— sino **en qué orden** y con qué
+consecuencias.
+
+1. **Qué hay que ejecutar** — el backlog y la clasificación predictivo/iterativo
+2. **Vuestros sprints** — reparto entre seis sprints con capacidad insuficiente
+3. **Lo que no estaba en el plan** — los contratiempos de su filial
+4. **La retrospectiva** — curva de entrega y acta descargable
+
+Vive en `core/proyecto.py`, y el documento en `core/acta.py`.
+
+### El backlog no está escrito a mano
+
+Cada iniciativa nace de una palanca real: el esfuerzo se deriva del coste
+(`EUROS_POR_PUNTO = 120.000`) y el valor, del porcentaje del objetivo que
+aporta. Se añaden dos iniciativas de la Sesión 4 —el sistema de medición y la
+evaluación de proveedores— que **no reducen ni una tonelada** y sin las cuales
+no hay memoria que verificar. Son las primeras que los grupos quieren quitar.
+
+**Esto resolvió el problema de la persistencia.** Un backlog con historial de
+sprints no se puede copiar a mano entre clases, y era la primera vez que la
+decisión de no tener persistencia hacía daño. Generándolo desde el caso, un
+grupo que faltó a una sesión puede hacer esta igual.
+
+### Las dos ideas
+
+**No todo se gestiona igual.** Cambiar el refrigerante es una obra: proveedor,
+permiso y fecha. El programa de proveedores es iterativo: nadie sabe qué
+funciona hasta probarlo. `ENFOQUE_PALANCA` clasifica las doce palancas con su
+razón escrita. Entre el 65 % y el 78 % del esfuerzo es predictivo según la
+filial. **Distinguirlo es la competencia**, y es lo que el temario llama
+enfoque híbrido.
+
+**Lo ágil no hace ir más rápido: hace enterarse antes.** Priorizar por valor
+entrega el 84-91 % del valor; empezar por lo más grande, el 13-50 %. Y sobre
+todo entrega antes: quien tiene algo en la calle en el sprint 2 puede
+defenderlo cuando llega el recorte.
+
+### La calibración
+
+| Filial | Esfuerzo | Capacidad/sprint | Sprints que haría falta |
+|---|---|---|---|
+| A · Madrid | 187 | 24,9 | 7,5 |
+| B · Barcelona | 132 | 16,8 | 7,9 |
+| C · Valencia | 133 | 13,3 | 10,0 |
+| D · Sevilla | 101 | 10,1 | 10,0 |
+| E · Bilbao | 55 | 7,0 | 7,9 |
+
+**A nadie le cabe todo, y es la premisa.** La capacidad se calcula sobre el
+propio backlog y se modula por empleados por punto de esfuerzo: Valencia y
+Sevilla arrastran inversiones grandes con plantillas pequeñas y van más
+justas, que es exactamente su situación real.
+
+Las iniciativas grandes **ocupan varios sprints y no entregan nada hasta que
+terminan**. La de energía de Madrid son 67 puntos sobre una capacidad de 24,9:
+casi tres sprints sin enseñar nada. Es lo que hace visible el coste de empezar
+por lo grande, y también el trabajo que queda a medias.
+
+### Los diez contratiempos
+
+Fijos y no aleatorios, para que los cinco grupos sean comparables y el guion
+pueda anticiparlos. Uno por filial en la primera mitad y otro en la segunda.
+Los más instructivos: a Sevilla se le va el jefe de tráfico **en el sprint 1**,
+antes de haber entregado nada; a Valencia se le retrasa el instalador de CO₂,
+que es su iniciativa más rentable y la más rígida; y a Bilbao le llega un
+recorte del 20 % y una petición de Madrid para copiar su modelo — ninguno de
+los dos es un fallo, y los dos consumen capacidad.
+
+### Nota de rendimiento
+
+`backlog` recorre las palancas de dos sesiones enteras y cuesta un segundo.
+Está cacheado con `lru_cache` y registrado en `core.datos.registrar_cache`,
+igual que la matriz de materialidad de la Sesión 4.
+
 ## El tutor de guardia
 
 Vive en `core/tutor.py`. Lee lo que ha escrito el grupo y devuelve **una
@@ -649,3 +733,21 @@ inverosímil.
   se apuntan en un registro en vez de importarse. `core.datos` no debe
   conocer a nadie, porque cualquier módulo nuevo crearía una importación
   circular.
+- **2026-07-31** — **Levantada la restricción sobre las sesiones 5 a 7.**
+  Tercera reversión expresa de Tomás, para cubrir Dirección de Proyectos:
+  Agile y Scrum en la 5, Kanban e híbridos en la 6 y gestión del cambio en
+  la 7. Ya no queda nada bloqueado del alcance original.
+- **2026-07-31** — El backlog de la Sesión 5 se **genera desde el caso** y no
+  lo reintroduce el alumno. Un backlog con historial de sprints no se copia a
+  mano entre clases: era la primera vez que la ausencia de persistencia hacía
+  daño de verdad, y generarlo la evita sin añadir Supabase.
+- **2026-07-31** — Las iniciativas grandes **progresan entre sprints** en vez
+  de entregarse o no. Sin eso, cualquier iniciativa mayor que un sprint era
+  inejecutable, y son justamente las que enseñan el coste de empezar por lo
+  grande.
+- **2026-07-31** — Los contratiempos son **fijos por filial** y no
+  aleatorios. Con aleatoriedad dos grupos viven clases distintas y la puesta
+  en común se descoloca; además el guion del profesor no podría anticiparlos.
+- **2026-07-31** — La clasificación predictivo/iterativo está **escrita y
+  razonada**, no deducida de los datos. Es el contenido de la sesión: una obra
+  es predictiva aunque la haga una empresa muy ágil.

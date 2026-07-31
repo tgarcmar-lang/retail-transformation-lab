@@ -44,9 +44,10 @@ SESIONES: list[Sesion] = [
     ),
     Sesion(
         numero=5,
-        titulo="Dirección de proyectos",
-        objetivo="Planificar y presupuestar la transformación.",
-        disponible=False,
+        titulo="Ejecución del plan",
+        objetivo="Convertir tres planes en trabajo: sprints, capacidad y "
+                 "contratiempos.",
+        disponible=True,
     ),
     Sesion(
         numero=6,
