@@ -145,11 +145,13 @@ sesión se reenvía el HTML en cada clic, así que allí va el pequeño.
       dependencia conductual por iniciativa, seis palancas de cambio y la
       brecha entre entregar y adoptar. Documento de cierre del curso.
       **1.805 pruebas en verde.**
+- [x] Guion del profesor de la Sesión 7 — fuera del repositorio. **Los siete
+      guiones están completos.**
 
 ### Siguiente
-- [ ] **Guion del profesor de la Sesión 7.** Es lo único que falta para que
-      el curso esté completo. Los seis anteriores están en
-      `C:\Proyectos\retail-lab-profesor`.
+- [ ] **Segunda prueba con alumnos**, ya con el tutor abierto y las siete
+      sesiones. Es lo único que puede decir si el cambio del tutor resolvió
+      la queja o solo la desplazó.
 - [ ] **Sin validar por Tomás:** los factores del alcance 3 (Sesión 2) y los
       del modelo circular (Sesión 3). Son calibraciones mías, verosímiles
       pero no contrastadas contra ninguna base publicada.
