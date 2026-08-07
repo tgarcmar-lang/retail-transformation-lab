@@ -263,7 +263,9 @@ def test_la_pregunta_del_tutor_no_va_al_informe():
     _botones_de_tutor(prueba)[0].click().run()
 
     documento = informe.generar("C", prueba.session_state["respuestas"])
-    pregunta = prueba.session_state["tutor_respuestas"]["paso2"][0]
+    # La clave lleva prefijo de sesión desde que el panel del tutor es
+    # compartido por las siete: ver `modulos/ayuda.py`.
+    pregunta = prueba.session_state["tutor_respuestas"]["s1_paso2"][0]
     assert "Nuestra conclusión." in documento
     assert pregunta not in documento
 

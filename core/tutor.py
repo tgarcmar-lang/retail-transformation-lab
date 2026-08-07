@@ -24,7 +24,34 @@ from __future__ import annotations
 
 from typing import Callable
 
-from core import kpis
+from core import conceptos, kpis
+
+#: Longitud máxima de una explicación generada. Más que esto es una clase
+#: magistral, y el alumno tiene una sesión que terminar.
+LARGO_MAXIMO_EXPLICACION = 1_400
+
+
+INSTRUCCION_EXPLICAR = """\
+Eres el tutor de una asignatura universitaria de logística y sostenibilidad.
+
+Un alumno te pregunta por un concepto, un método o un estándar. Tu trabajo es
+EXPLICÁRSELO bien, como lo haría un buen profesor: claro, corto y con un
+ejemplo si ayuda.
+
+Reglas:
+
+- Explica el concepto de forma general. Responde de verdad a lo que preguntan.
+- Como MUCHO seis frases. Si el concepto es grande, da lo esencial y di qué
+  es lo que más importa retener.
+- NO inventes cifras. Si no sabes un dato concreto, dilo.
+- NO hables de ninguna empresa concreta ni de ninguna filial, porque no
+  tienes sus datos delante y te los inventarías.
+- Si la pregunta no es sobre un concepto sino sobre qué le pasa a su empresa,
+  contesta que eso tienen que verlo en los datos y sugiere qué tipo de cifra
+  deberían mirar, sin inventarte cuál será el resultado.
+- Habla en español de España, de vosotros, con tono cercano y directo.
+- Nada de listas larguísimas ni de lenguaje de folleto.
+"""
 
 URL = "https://generativelanguage.googleapis.com/v1beta/interactions"
 
@@ -315,6 +342,89 @@ def pregunta_de_reserva(paso: str, semilla: int = 0) -> str:
     """Pregunta escrita a mano. Siempre disponible, sin clave ni conexión."""
     opciones = RESERVA.get(paso) or RESERVA["diagnostico"]
     return opciones[semilla % len(opciones)]
+
+
+def _es_una_explicacion_valida(texto: str) -> bool:
+    """Filtro para el modo explicar.
+
+    Aquí sí queremos afirmaciones, no preguntas, así que el filtro es el
+    contrario: se descarta lo que venga vacío o kilométrico.
+    """
+    limpio = (texto or "").strip()
+    return bool(limpio) and len(limpio) <= LARGO_MAXIMO_EXPLICACION
+
+
+def explicar(consulta: str, secretos=None, sesion: int | None = None,
+             transporte: Callable | None = None) -> tuple[str, str]:
+    """Explica un concepto. Devuelve (texto, de dónde salió).
+
+    El origen puede ser ``"banco"``, ``"tutor"`` o ``"sin_respuesta"``.
+
+    **Este modo no recibe ni un solo dato de la filial**, y eso es
+    deliberado: al no conocer el caso, el modelo no puede desvelar el
+    hallazgo aunque quisiera. Lo que protege la sesión no es una prohibición
+    en el prompt, que se puede sortear, sino que la información no está.
+
+    El banco escrito a mano tiene prioridad: responde al instante, no gasta
+    cuota y está mejor redactado. La IA solo entra cuando no hay concepto que
+    encaje.
+    """
+    limpio = (consulta or "").strip()
+    if not limpio:
+        return ("Escribid la duda y os la explico: un concepto, un "
+                "indicador, un estándar o cómo se calcula algo."), "banco"
+
+    concepto = conceptos.buscar(limpio, sesion)
+    if concepto is not None:
+        return conceptos.texto(concepto), "banco"
+
+    if secretos is None or not hay_clave(secretos):
+        return _sin_respuesta(), "sin_respuesta"
+
+    try:
+        texto = _llamar(
+            str(secretos["gemini"]["api_key"]).strip(),
+            INSTRUCCION_EXPLICAR, limpio, transporte,
+        )
+    except Exception:
+        return _sin_respuesta(), "sin_respuesta"
+
+    if not _es_una_explicacion_valida(texto):
+        return _sin_respuesta(), "sin_respuesta"
+    return texto.strip(), "tutor"
+
+
+def _sin_respuesta() -> str:
+    """Lo que se dice cuando no hay explicación disponible.
+
+    Nunca un error: se reconduce al alumno a algo que sí puede hacer.
+    """
+    titulos = ", ".join(c.titulo.lower() for c in conceptos.CONCEPTOS[:4])
+    return (
+        "De eso no tengo una explicación preparada y ahora mismo no puedo "
+        "consultar. Probad a preguntarlo con otras palabras, o preguntad al "
+        f"profesor. Sí os puedo explicar cosas como {titulos} y bastantes "
+        "más."
+    )
+
+
+def orientar(consulta: str, sesion: int | None = None) -> tuple[str, bool]:
+    """Dice dónde está el dato, sin decir qué se va a encontrar.
+
+    Es lo único que este tutor puede hacer y ningún asistente externo puede,
+    porque requiere conocer la aplicación. Devuelve (texto, si acertó).
+    """
+    concepto = conceptos.buscar(consulta or "", sesion)
+    if concepto is None or not concepto.donde_mirar:
+        return (
+            "No sé a qué pantalla os referís. Decidme el concepto o el "
+            "indicador que buscáis y os digo en qué paso está."
+        ), False
+    return (
+        f"**{concepto.titulo}** — {concepto.donde_mirar}\n\n"
+        f"Lo que encontréis ahí lo tenéis que interpretar vosotros: yo os "
+        f"digo dónde está, no lo que dice."
+    ), True
 
 
 def preguntar(grupo: str, paso: str, escrito: str, secretos=None,

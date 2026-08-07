@@ -16,6 +16,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
+from modulos import ayuda
 from core import datos, filiales, informe, kpis, tutor
 
 VERDE = "#0F766E"
@@ -70,6 +71,8 @@ def _grafico(figura: go.Figure, alto: int = 320) -> None:
 #: Cuántas veces puede un grupo pedir ayuda al tutor en toda la sesión.
 #: No es por la cuota: es pedagógico. Si pudieran pulsar sin límite, el
 #: ejercicio se convertiría en ir preguntando hasta que salga la respuesta.
+#: Se conserva por compatibilidad: el límite real vive ahora en
+#: `modulos/ayuda.py`, que es quien dibuja el panel del tutor.
 LIMITE_TUTOR = 12
 
 
@@ -91,51 +94,8 @@ def _pregunta(clave: str, grupo: str | None = None) -> None:
 
 
 def _tutor(clave: str, grupo: str) -> None:
-    """El tutor de guardia: devuelve una pregunta, nunca una respuesta.
-
-    Si no hay clave de Google configurada, o si Google falla, sale igual una
-    pregunta escrita a mano. Desde fuera no se nota la diferencia salvo por
-    la nota al pie, que dice la verdad sobre de dónde viene.
-    """
-    st.session_state.setdefault("tutor_usos", 0)
-    st.session_state.setdefault("tutor_respuestas", {})
-
-    usos = st.session_state["tutor_usos"]
-    agotado = usos >= LIMITE_TUTOR
-
-    izquierda, derecha = st.columns([1, 3])
-    pulsado = izquierda.button(
-        "Preguntar al tutor",
-        key=f"tutor_{clave}",
-        disabled=agotado,
-        help="Lee lo que habéis escrito y os devuelve una pregunta para "
-             "haceros avanzar. No os va a dar la respuesta.",
-    )
-    if agotado:
-        derecha.caption(
-            "Habéis gastado las consultas al tutor. A partir de aquí, "
-            "preguntad al profesor."
-        )
-
-    if pulsado:
-        escrito = st.session_state["respuestas"].get(clave, "")
-        try:
-            secretos = st.secrets
-        except Exception:
-            secretos = None
-        with st.spinner("El tutor está leyendo lo que habéis escrito…"):
-            texto, del_tutor = tutor.preguntar(
-                grupo, clave, escrito, secretos, semilla=usos
-            )
-        st.session_state["tutor_respuestas"][clave] = (texto, del_tutor)
-        st.session_state["tutor_usos"] = usos + 1
-
-    guardada = st.session_state["tutor_respuestas"].get(clave)
-    if guardada:
-        texto, del_tutor = guardada
-        st.info(f"**El tutor os pregunta:** {texto}")
-        if not del_tutor:
-            st.caption("Pregunta del banco de la asignatura.")
+    """Delegado en el panel compartido: ver `modulos/ayuda.py`."""
+    ayuda.pregunta(clave, grupo, 1, "respuestas")
 
 
 def _pista(texto: str) -> None:
@@ -551,6 +511,7 @@ def mostrar(grupo: str) -> None:
     st.session_state["paso"] = paso
 
     st.progress((paso + 1) / len(PASOS), text=PASOS[paso][1])
+    ayuda.panel(1)
     st.divider()
 
     if paso == 0:

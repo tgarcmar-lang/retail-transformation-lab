@@ -31,6 +31,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
+from modulos import ayuda
 from core import (alcance3, datos, filiales, kpis, palancas,
                   plan as documento_plan, tutor)
 
@@ -87,42 +88,8 @@ def _respuesta(clave: str, etiqueta: str, grupo: str,
 
 
 def _tutor(clave: str, grupo: str) -> None:
-    """Mismo tutor de guardia que en la Sesión 1: pregunta, nunca responde."""
-    from modulos.sesion1_diagnostico import LIMITE_TUTOR
-
-    st.session_state.setdefault("tutor_usos", 0)
-    st.session_state.setdefault("tutor_respuestas", {})
-    usos = st.session_state["tutor_usos"]
-    agotado = usos >= LIMITE_TUTOR
-
-    izquierda, derecha = st.columns([1, 3])
-    pulsado = izquierda.button(
-        "Preguntar al tutor", key=f"s2_tutor_{clave}", disabled=agotado,
-        help="Lee lo que habéis escrito y os devuelve una pregunta. "
-             "No os va a dar la respuesta.",
-    )
-    if agotado:
-        derecha.caption("Habéis gastado las consultas. Preguntad al profesor.")
-
-    if pulsado:
-        escrito = st.session_state["respuestas2"].get(clave, "")
-        try:
-            secretos = st.secrets
-        except Exception:
-            secretos = None
-        with st.spinner("El tutor está leyendo lo que habéis escrito…"):
-            texto, del_tutor = tutor.preguntar(
-                grupo, f"s2_{clave}", escrito, secretos, semilla=usos
-            )
-        st.session_state["tutor_respuestas"][f"s2_{clave}"] = (texto, del_tutor)
-        st.session_state["tutor_usos"] = usos + 1
-
-    guardada = st.session_state["tutor_respuestas"].get(f"s2_{clave}")
-    if guardada:
-        texto, del_tutor = guardada
-        st.info(f"**El tutor os pregunta:** {texto}")
-        if not del_tutor:
-            st.caption("Pregunta del banco de la asignatura.")
+    """Delegado en el panel compartido: ver `modulos/ayuda.py`."""
+    ayuda.pregunta(clave, grupo, 2, "respuestas2")
 
 
 # --------------------------------------------------------------------------
@@ -664,6 +631,7 @@ def mostrar(grupo: str) -> None:
     st.session_state["paso2"] = paso
 
     st.progress((paso + 1) / len(PASOS), text=PASOS[paso][1])
+    ayuda.panel(2)
     st.divider()
 
     if paso == 0:
