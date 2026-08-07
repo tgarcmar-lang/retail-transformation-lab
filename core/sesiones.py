@@ -57,9 +57,10 @@ SESIONES: list[Sesion] = [
     ),
     Sesion(
         numero=7,
-        titulo="Comité de Dirección",
-        objetivo="Defender la estrategia y compararla con la del resto de filiales.",
-        disponible=False,
+        titulo="Gestión del cambio",
+        objetivo="Que el plan lo haga alguien: actores, adopción y la brecha "
+                 "entre entregar y cambiar.",
+        disponible=True,
     ),
 ]
 

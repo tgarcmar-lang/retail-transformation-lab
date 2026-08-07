@@ -34,14 +34,15 @@ Valida contenido, KPIs y sentido pedagógico. No le pidas revisar código.
   capacidad, contratiempos y enfoque híbrido).
 - Sesión 6: Seguimiento con Kanban y enfoques híbridos (límite de trabajo en
   curso, ley de Little, flujo acumulado).
+- Sesión 7: Gestión del cambio (mapa de actores, adopción y la brecha entre
+  entregar y cambiar). Cierra el curso.
 - Asistente de IA que comenta resultados y plantea preguntas.
 - Panel del profesor para comparar los cinco grupos.
 
 ### NO se construye (decisión vinculante hasta enero de 2027)
 Control Tower · Digital Twin · Robotics Studio · Telecommunications Studio ·
 Agentes multi-rol · Módulo de Dirección de Proyectos · Gestión del Cambio ·
-Comité de Dirección virtual · Otros sectores · Modo Desarrollador ·
-Sesión 7
+Comité de Dirección virtual · Otros sectores · Modo Desarrollador
 
 Si el usuario pide algo de esta lista, recuérdale que está pospuesto, no descartado.
 La inflación de alcance es el principal riesgo de este proyecto.
@@ -52,7 +53,8 @@ cuatro competencias del programa: logística verde y economía circular,
 medición y reporting ESG, ejecución con métodos ágiles y seguimiento con
 Kanban e híbridos. En cada caso se le recordó la decisión vinculante del 29
 de julio y la mantuvo. Queda constancia en el registro de decisiones. **La
-sesión 7 está comprometida** (gestión del cambio) y pendiente de construir.
+Sesión 7 se construyó el 7 de agosto**, después de la primera prueba con
+alumnos. Ya no queda nada bloqueado del alcance original.
 
 ## Decisiones técnicas cerradas
 
@@ -135,22 +137,24 @@ sesión se reenvía el HTML en cada clic, así que allí va el pequeño.
 - [x] **Sesión 6 · Seguimiento con Kanban (31 jul 2026).** Tablero de cuatro
       columnas, límite de trabajo en curso con óptimo distinto por filial,
       ley de Little comprobada y sistema híbrido. Guion del profesor
-      incluido. **1.647 pruebas en verde.**
+      incluido.
+- [x] **Tutor de guardia reabierto (7 ago 2026), tras la primera prueba con
+      alumnos.** Tres modos: explicar, decir dónde mirar y preguntar. Banco
+      de 30 conceptos escrito a mano.
+- [x] **Sesión 7 · Gestión del cambio (7 ago 2026).** Mapa de actores,
+      dependencia conductual por iniciativa, seis palancas de cambio y la
+      brecha entre entregar y adoptar. Documento de cierre del curso.
+      **1.805 pruebas en verde.**
 
 ### Siguiente
-- [ ] Demo con alumnos en los próximos días. Después, afinar con lo que se
-      vea.
+- [ ] **Guion del profesor de la Sesión 7.** Es lo único que falta para que
+      el curso esté completo. Los seis anteriores están en
+      `C:\Proyectos\retail-lab-profesor`.
 - [ ] **Sin validar por Tomás:** los factores del alcance 3 (Sesión 2) y los
       del modelo circular (Sesión 3). Son calibraciones mías, verosímiles
       pero no contrastadas contra ninguna base publicada.
-- [ ] **Sesión 7 (gestión del cambio).** Comprometida con Tomás el 31 de
-      julio, sin construir. Es la más distinta de todas: no va de números
-      sino de personas, y merece una conversación de diseño antes de
-      escribir nada.
-- [ ] **Demo con alumnos la semana del 3 de agosto.** Tomás la realiza y
-      después informa. Es la primera vez que alguien de fuera toca esto.
-- [ ] **Sin cronometrar:** ninguna de las seis sesiones se ha probado con
-      alumnos. Las seis están planificadas a 90 minutos sobre el papel.
+- [ ] **Sin cronometrar:** las siete siguen planificadas a 90 minutos sobre
+      el papel. La prueba de agosto no midió tiempos.
 - [ ] **Caduca solo:** el contenido normativo de la Sesión 4 (CSRD, ESRS,
       SBTi). Verificar antes de cada curso. Es lo único del proyecto que se
       queda obsoleto sin que nadie toque nada.
@@ -580,6 +584,94 @@ punto de espera, así que nunca se bloqueaban y **WIP 1 salía óptimo en dos
 filiales**. Moverlo a la entrada lo arregló y además es más realista: se abre
 la tarea, se descubre que hace falta un presupuesto o un permiso, y se espera.
 
+## La primera prueba con alumnos (agosto de 2026)
+
+Tomás probó las sesiones construidas con alumnos reales. **Funcionó**, y lo
+que más gustó fue lo que más caro costó de construir: que **los cinco grupos
+no obtengan los mismos resultados**. Esa era la apuesta de diseño que podía
+no notarse, y se notó.
+
+**La única queja fue el tutor**, y era buena: solo preguntaba y nunca
+resolvía nada, así que los alumnos acababan consultando un motor de IA
+externo. Su frase, según Tomás, fue que el motor externo *«tampoco les
+soluciona la vida, pero les da algunas pautas mejor recibidas»*. Lo que
+querían no era la respuesta: era método.
+
+### Lo que se cambió, y por qué el diseño original estaba a medias
+
+El diseño protegía lo correcto —el hallazgo de cada filial— pero con
+demasiada brocha. Qué es el alcance 3, por qué reciclar pierde material o qué
+exige la CSRD **no son hallazgos, son conceptos**, y negarse a explicarlos
+volvía el tutor inútil frente a cualquier alternativa.
+
+Ahora hay **tres modos**, en `core/tutor.py` y `modulos/ayuda.py`:
+
+| Modo | Qué hace | Riesgo de filtrar |
+|---|---|---|
+| **Explicar** | Responde de verdad sobre conceptos, métodos y estándares | Ninguno: no recibe datos de la filial |
+| **Dónde mirar** | En qué paso y en qué columna está el dato | Ninguno: dice dónde, no qué |
+| **Preguntar** | Lee lo escrito y devuelve una pregunta | El de siempre, ya controlado |
+
+**La protección es estructural, no una prohibición en el prompt.**
+`tutor.explicar()` no acepta el grupo como parámetro: no puede enviar datos
+de la filial ni queriendo. Hay una prueba que lo verifica por introspección.
+
+`core/conceptos.py` es un **banco de 30 conceptos escritos a mano** que cubre
+las siete sesiones. Se eligió escribirlos y no generarlos por tres razones:
+no pueden filtrar nada, no gastan cuota ni fallan, y están mejor redactados
+que lo que da un modelo gratuito. La IA solo entra cuando el banco no llega.
+
+**Una prueba encontró un fallo real al escribirlo:** la explicación de
+circularidad citaba «reciclar el 84 % y recircular el 46 %», que son
+exactamente las cifras de Bilbao. Estaba regalando su hallazgo. La prueba
+`test_ninguna_explicacion_del_banco_nombra_a_una_filial` lo vigila.
+
+## Sesión 7 · cómo está montada
+
+Cuatro pasos. Las seis anteriores eran racionales: datos, objetivo y una
+respuesta mejor que las demás. Esta introduce lo único que no tenían: gente.
+
+1. **A quién le toca** — el mapa de actores del propio plan
+2. **Qué depende de las personas** — máquinas frente a hábitos
+3. **Vuestro plan de cambio** — seis palancas con presupuesto y curva de
+   adopción a doce meses
+4. **El cierre** — la brecha entre entregar y cambiar
+
+Vive en `core/cambio.py`, y el documento en `core/plan_cambio.py`.
+
+### Las dos ideas
+
+**Quien tiene que cambiar no es quien se lleva el beneficio.** Se le pide al
+personal de tienda que prepare paquetes para que bajen las emisiones de
+reparto; al equipo de compras, que complique su propio objetivo de precio. La
+resistencia rara vez es irracional: es que el esfuerzo y el beneficio caen en
+manos distintas. El mapa de actores lo hace visible cruzando **cuánto le toca
+a cada rol** con **cuánto poder tiene**, y casi nunca coinciden.
+
+**Se puede entregar un proyecto al 100 % y no cambiar nada.** Cada iniciativa
+tiene una *dependencia conductual* escrita y razonada: el refrigerante es
+0,05 —una máquina que funciona la quiera alguien o no— y la segregación es
+0,90 —miles de gestos diarios—. Entre el 42 % y el 46 % del valor del plan de
+cada filial está en manos de otros. Sin gestionar el cambio se pierde más de
+un tercio.
+
+### Por qué el mandato no es la respuesta
+
+Ordenarlo desde dirección es lo más barato y lo más rápido: llega al 62 % en
+el mes 2 y después **se desinfla hasta el 47 %**, porque nadie ha cambiado de
+opinión, solo ha dejado de discutir. Participar es lo más lento y lo único
+que aguanta. Hay pruebas que fijan las dos cosas.
+
+El presupuesto está calibrado para que comprarlo todo cueste **más del doble**
+de lo disponible: el plan que lo arregla del todo no cabe, y hay prueba que
+lo verifica.
+
+### El documento de cierre
+
+Un solo fichero con el plan de gestión del cambio **y la memoria del curso
+completo**, con las siete sesiones puestas en fila. Se hizo así porque un
+alumno enseña un documento en una entrevista, no siete.
+
 ## El tutor de guardia
 
 Vive en `core/tutor.py`. Lee lo que ha escrito el grupo y devuelve **una
@@ -847,3 +939,26 @@ inverosímil.
   vista** en lugar de forzar el modelo para que cuadre. Que no encaje del
   todo es información: el sistema no está estable, y decirlo enseña más que
   ocultarlo.
+- **2026-08-07** — **El tutor pasa de un modo a tres**, tras la queja de los
+  alumnos en la primera prueba. Se abre a explicar conceptos y a decir dónde
+  está el dato, y se mantiene cerrado sobre el hallazgo de la filial. La
+  decisión del 29 de julio no se revoca: se acota a lo que de verdad había
+  que proteger.
+- **2026-08-07** — Las explicaciones van en un **banco escrito a mano** y no
+  generadas. No pueden filtrar nada, no gastan cuota, no fallan sin red y
+  están mejor redactadas. La IA es el respaldo, no la fuente.
+- **2026-08-07** — La protección del hallazgo en el modo explicar es
+  **estructural**: la función no recibe el grupo. Una prohibición en el
+  prompt se puede sortear; la ausencia de datos, no.
+- **2026-08-07** — La Sesión 7 mide **adopción y no entrega**, que es lo que
+  la distingue de la 5 y de la 6. Sin esa distinción sería una tercera
+  sesión de gestión de proyectos y el curso se quedaría sin cierre.
+- **2026-08-07** — La dependencia conductual de cada iniciativa está
+  **escrita y razonada**, como la clasificación predictivo/iterativo de la
+  Sesión 5. Es el contenido de la sesión, no un parámetro.
+- **2026-08-07** — El plan de cambio y la memoria del curso van en **un solo
+  documento**. Un alumno enseña un documento en una entrevista, no siete, y
+  las siete decisiones puestas en fila cuentan algo que por separado no se ve.
+- **2026-08-07** — El panel del tutor pasa a estar **compartido** en
+  `modulos/ayuda.py` en vez de copiado en cada sesión. Con un solo modo la
+  duplicación era tolerable; con tres, no.
