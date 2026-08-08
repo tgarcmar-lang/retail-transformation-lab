@@ -147,6 +147,14 @@ sesión se reenvía el HTML en cada clic, así que allí va el pequeño.
       **1.805 pruebas en verde.**
 - [x] Guion del profesor de la Sesión 7 — fuera del repositorio. **Los siete
       guiones están completos.**
+- [x] **Apuntes del alumno (7 ago 2026).** Cinco documentos de 7-8 páginas,
+      uno por clase oficial de 4 horas, para leer antes de venir. Viven
+      **fuera del repositorio**, en `C:\Proyectos\retail-lab-apuntes`, con un
+      `comun.py` de formato compartido. Correspondencia: apuntes 1 = app S1+S2,
+      2 = S3, 3 = S4, 4 = S5, 5 = S6+S7. **Explican conceptos, nunca
+      hallazgos**: hay una comprobación que busca nombres de filial y cifras
+      del caso en el .docx generado. La autoevaluación va sin soluciones a
+      petición de Tomás.
 
 ### Siguiente
 - [ ] **Segunda prueba con alumnos**, ya con el tutor abierto y las siete
